@@ -1,0 +1,209 @@
+import { useEffect, useMemo, useState } from "react"
+import { Link } from "react-router-dom"
+import { LayoutDashboard, School } from "lucide-react"
+import {
+  listActivities,
+  listClassrooms,
+  listGradingResultsForClassroom,
+  listStudents,
+} from "@/lib/api"
+import type { Activity, Classroom, GradingResult, Student } from "@/types/database"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+
+interface ClassroomStats {
+  classroom: Classroom
+  studentCount: number
+  activityCount: number
+  average: number | null
+  lastActivityAt: string | null
+}
+
+export default function Dashboard() {
+  const [rows, setRows] = useState<ClassroomStats[]>([])
+  const [loading, setLoading] = useState(true)
+  const [subjectFilter, setSubjectFilter] = useState("all")
+  const [gradeFilter, setGradeFilter] = useState("all")
+  const [sortBy, setSortBy] = useState<"recent" | "average" | "students">("recent")
+
+  useEffect(() => {
+    let cancelled = false
+    async function load() {
+      setLoading(true)
+      const [classrooms, activities] = await Promise.all([listClassrooms(), listActivities()])
+
+      const results = await Promise.all(
+        classrooms.map(async (classroom): Promise<ClassroomStats> => {
+          const [students, gradingResults] = await Promise.all([
+            listStudents(classroom.id) as Promise<Student[]>,
+            listGradingResultsForClassroom(classroom.id) as Promise<GradingResult[]>,
+          ])
+          const classroomActivities = activities.filter(
+            (a: Activity) => a.classroom_id === classroom.id
+          )
+          const average = gradingResults.length
+            ? gradingResults.reduce((sum, r) => sum + Number(r.score), 0) / gradingResults.length
+            : null
+          const lastActivityAt = classroomActivities[0]?.created_at ?? null
+          return {
+            classroom,
+            studentCount: students.length,
+            activityCount: classroomActivities.length,
+            average,
+            lastActivityAt,
+          }
+        })
+      )
+      if (!cancelled) {
+        setRows(results)
+        setLoading(false)
+      }
+    }
+    load()
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  const subjects = useMemo(
+    () => Array.from(new Set(rows.map((r) => r.classroom.subject))).sort(),
+    [rows]
+  )
+  const grades = useMemo(
+    () => Array.from(new Set(rows.map((r) => r.classroom.grade))).sort(),
+    [rows]
+  )
+
+  const filtered = rows
+    .filter((r) => subjectFilter === "all" || r.classroom.subject === subjectFilter)
+    .filter((r) => gradeFilter === "all" || r.classroom.grade === gradeFilter)
+    .sort((a, b) => {
+      if (sortBy === "average") return (b.average ?? -1) - (a.average ?? -1)
+      if (sortBy === "students") return b.studentCount - a.studentCount
+      return (b.lastActivityAt ?? "").localeCompare(a.lastActivityAt ?? "")
+    })
+
+  const totals = {
+    classrooms: rows.length,
+    students: rows.reduce((sum, r) => sum + r.studentCount, 0),
+    activities: rows.reduce((sum, r) => sum + r.activityCount, 0),
+    average: (() => {
+      const withAvg = rows.filter((r) => r.average !== null)
+      if (!withAvg.length) return null
+      return withAvg.reduce((sum, r) => sum + (r.average ?? 0), 0) / withAvg.length
+    })(),
+  }
+
+  return (
+    <div className="grid gap-6">
+      <div>
+        <h1 className="text-2xl font-semibold tracking-tight">Dashboard</h1>
+        <p className="text-muted-foreground">Compare performance across all of your classrooms.</p>
+      </div>
+
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+        <StatCard label="Classrooms" value={String(totals.classrooms)} />
+        <StatCard label="Students" value={String(totals.students)} />
+        <StatCard label="Activities" value={String(totals.activities)} />
+        <StatCard
+          label="Overall average"
+          value={totals.average !== null ? `${totals.average.toFixed(0)}%` : "—"}
+        />
+      </div>
+
+      <div className="flex flex-wrap gap-3">
+        <Select value={subjectFilter} onValueChange={setSubjectFilter}>
+          <SelectTrigger className="w-44">
+            <SelectValue placeholder="Subject" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All subjects</SelectItem>
+            {subjects.map((s) => (
+              <SelectItem key={s} value={s}>
+                {s}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        <Select value={gradeFilter} onValueChange={setGradeFilter}>
+          <SelectTrigger className="w-44">
+            <SelectValue placeholder="Grade" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All grades</SelectItem>
+            {grades.map((g) => (
+              <SelectItem key={g} value={g}>
+                {g}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        <Select value={sortBy} onValueChange={(v) => setSortBy(v as typeof sortBy)}>
+          <SelectTrigger className="w-52">
+            <SelectValue placeholder="Sort by" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="recent">Sort: Most recent activity</SelectItem>
+            <SelectItem value="average">Sort: Highest average</SelectItem>
+            <SelectItem value="students">Sort: Most students</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      {!loading && filtered.length === 0 && (
+        <Card className="border-dashed">
+          <CardContent className="flex flex-col items-center gap-3 py-12 text-center">
+            <LayoutDashboard className="size-8 text-muted-foreground" />
+            <p className="text-sm text-muted-foreground">No classrooms match these filters.</p>
+          </CardContent>
+        </Card>
+      )}
+
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {filtered.map(({ classroom, studentCount, activityCount, average }) => (
+          <Link key={classroom.id} to={`/classrooms/${classroom.id}`}>
+            <Card className="h-full transition-colors hover:border-primary/40 hover:bg-accent/30">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-base">
+                  <School className="size-4 text-muted-foreground" />
+                  {classroom.name}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="grid gap-2">
+                <div className="flex flex-wrap gap-1.5">
+                  <Badge variant="secondary">{classroom.subject}</Badge>
+                  <Badge variant="secondary">{classroom.grade}</Badge>
+                </div>
+                <div className="mt-1 flex justify-between text-sm text-muted-foreground">
+                  <span>{studentCount} students</span>
+                  <span>{activityCount} activities</span>
+                  <span>{average !== null ? `${average.toFixed(0)}% avg` : "No grades yet"}</span>
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function StatCard({ label, value }: { label: string; value: string }) {
+  return (
+    <Card>
+      <CardContent className="p-4">
+        <p className="text-sm text-muted-foreground">{label}</p>
+        <p className="text-2xl font-bold">{value}</p>
+      </CardContent>
+    </Card>
+  )
+}
