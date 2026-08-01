@@ -2,6 +2,7 @@ import { HashRouter, Route, Routes } from "react-router-dom"
 import AppShell from "@/components/layout/AppShell"
 import ProtectedRoute from "@/components/layout/ProtectedRoute"
 import ActivityGenerator from "@/pages/ActivityGenerator"
+import ActivityHistory from "@/pages/ActivityHistory"
 import Classrooms from "@/pages/Classrooms"
 import ClassroomDetail from "@/pages/ClassroomDetail"
 import GradingScreen from "@/pages/GradingScreen"
@@ -19,6 +20,7 @@ function App() {
           }
         >
           <Route path="/" element={<ActivityGenerator />} />
+          <Route path="/history" element={<ActivityHistory />} />
           <Route path="/classrooms" element={<Classrooms />} />
           <Route path="/classrooms/:classroomId" element={<ClassroomDetail />} />
           <Route

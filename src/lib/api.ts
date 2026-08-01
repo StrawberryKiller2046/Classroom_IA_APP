@@ -14,6 +14,9 @@ export interface GenerateActivityInput {
   exam_name: string
   include_answer_sheet: boolean
   classroom_id?: string | null
+  // When true, the AI-suggested title (based on the actual exam content)
+  // replaces exam_name instead of the client's placeholder.
+  use_ai_title?: boolean
 }
 
 export async function generateActivity(input: GenerateActivityInput): Promise<Activity> {

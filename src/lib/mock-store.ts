@@ -181,10 +181,14 @@ export const mockApi = {
       }
     })
 
+    const suggestedTitle = input.topic
+      ? `[Demo] ${input.topic} in ${input.subject}`
+      : `[Demo] ${input.subject} Practice Exam`
+
     const activity: Activity = {
       id: uid(),
       user_id: "demo",
-      exam_name: input.exam_name,
+      exam_name: input.use_ai_title ? suggestedTitle : input.exam_name,
       subject: input.subject,
       country: input.country,
       education_level: input.education_level,

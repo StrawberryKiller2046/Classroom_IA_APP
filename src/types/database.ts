@@ -92,3 +92,35 @@ export const EXERCISE_TYPES = [
   { value: "short", label: "Short Answer" },
   { value: "mixed", label: "Mixed" },
 ] as const
+
+export const COUNTRIES = [
+  "Argentina", "Australia", "Austria", "Belgium", "Bolivia", "Brazil",
+  "Canada", "Chile", "China", "Colombia", "Costa Rica", "Cuba",
+  "Czech Republic", "Denmark", "Dominican Republic", "Ecuador", "Egypt",
+  "El Salvador", "Finland", "France", "Germany", "Greece", "Guatemala",
+  "Honduras", "Hong Kong", "Hungary", "India", "Indonesia", "Ireland",
+  "Israel", "Italy", "Jamaica", "Japan", "Kenya", "Malaysia", "Mexico",
+  "Morocco", "Netherlands", "New Zealand", "Nicaragua", "Nigeria",
+  "Norway", "Panama", "Paraguay", "Peru", "Philippines", "Poland",
+  "Portugal", "Puerto Rico", "Romania", "Russia", "Saudi Arabia",
+  "Singapore", "South Africa", "South Korea", "Spain", "Sweden",
+  "Switzerland", "Thailand", "Turkey", "Ukraine", "United Arab Emirates",
+  "United Kingdom", "United States", "Uruguay", "Venezuela", "Vietnam",
+] as const
+
+export const GRADES = [
+  "Kindergarten",
+  "1st Grade", "2nd Grade", "3rd Grade", "4th Grade", "5th Grade",
+  "6th Grade", "7th Grade", "8th Grade", "9th Grade", "10th Grade",
+  "11th Grade", "12th Grade",
+  "1st Year (University)", "2nd Year (University)",
+  "3rd Year (University)", "4th Year (University)",
+] as const
+
+export const SUBJECTS = [
+  "Mathematics", "Science", "Biology", "Chemistry", "Physics",
+  "English / Language Arts", "Native Language / Literature", "History",
+  "Geography", "Social Studies", "Civics", "Economics",
+  "Computer Science", "Art", "Music", "Physical Education",
+  "Foreign Language", "Philosophy", "Environmental Science", "Health",
+] as const

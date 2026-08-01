@@ -1,10 +1,11 @@
 import { NavLink, Outlet } from "react-router-dom"
-import { FlaskConical, GraduationCap, LayoutDashboard, School, Sparkles } from "lucide-react"
+import { FlaskConical, GraduationCap, History, LayoutDashboard, School, Sparkles } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { isSupabaseConfigured } from "@/lib/supabase"
 
 const NAV_ITEMS = [
   { to: "/", label: "Generator", icon: Sparkles, end: true },
+  { to: "/history", label: "History", icon: History },
   { to: "/classrooms", label: "Classrooms", icon: School },
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
 ]

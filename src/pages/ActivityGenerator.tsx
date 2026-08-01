@@ -6,11 +6,12 @@ import { Loader2, Sparkles } from "lucide-react"
 import { toast } from "sonner"
 import { generateActivity, getUsage, listClassrooms } from "@/lib/api"
 import type { Activity, Classroom } from "@/types/database"
-import { DIFFICULTIES, EDUCATION_LEVELS, EXERCISE_TYPES } from "@/types/database"
+import { COUNTRIES, DIFFICULTIES, EDUCATION_LEVELS, EXERCISE_TYPES, GRADES, SUBJECTS } from "@/types/database"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
+import { Slider } from "@/components/ui/slider"
 import {
   Select,
   SelectContent,
@@ -70,6 +71,7 @@ export default function ActivityGenerator() {
 
   const subject = form.watch("subject")
   const grade = form.watch("grade")
+  const numExercises = form.watch("num_exercises")
 
   useEffect(() => {
     if (!examNameTouched) {
@@ -90,8 +92,12 @@ export default function ActivityGenerator() {
       const activity = await generateActivity({
         ...values,
         classroom_id: values.classroom_id || null,
+        // Only let Gemini pick the exam's real title when the teacher hasn't
+        // typed their own — an explicit edit always wins.
+        use_ai_title: !examNameTouched,
       })
       setResult(activity)
+      if (!examNameTouched) form.setValue("exam_name", activity.exam_name)
       toast.success("Activity generated")
       getUsage().then(setUsage).catch(() => {})
     } catch (err) {
@@ -120,7 +126,21 @@ export default function ActivityGenerator() {
       <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-6">
         <div className="grid gap-5 sm:grid-cols-2">
           <Field label="Country / curriculum region" error={form.formState.errors.country?.message}>
-            <Input placeholder="e.g. Spain, Mexico, Ontario (Canada)" {...form.register("country")} />
+            <Select
+              value={form.watch("country")}
+              onValueChange={(v) => form.setValue("country", v, { shouldValidate: true })}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select a country" />
+              </SelectTrigger>
+              <SelectContent>
+                {COUNTRIES.map((country) => (
+                  <SelectItem key={country} value={country}>
+                    {country}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </Field>
 
           <Field label="Education level" error={form.formState.errors.education_level?.message}>
@@ -142,11 +162,39 @@ export default function ActivityGenerator() {
           </Field>
 
           <Field label="Grade / year" error={form.formState.errors.grade?.message}>
-            <Input placeholder="e.g. 5th Grade, Year 10" {...form.register("grade")} />
+            <Select
+              value={form.watch("grade")}
+              onValueChange={(v) => form.setValue("grade", v, { shouldValidate: true })}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select a grade" />
+              </SelectTrigger>
+              <SelectContent>
+                {GRADES.map((g) => (
+                  <SelectItem key={g} value={g}>
+                    {g}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </Field>
 
           <Field label="Subject" error={form.formState.errors.subject?.message}>
-            <Input placeholder="e.g. Mathematics, Biology" {...form.register("subject")} />
+            <Select
+              value={form.watch("subject")}
+              onValueChange={(v) => form.setValue("subject", v, { shouldValidate: true })}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select a subject" />
+              </SelectTrigger>
+              <SelectContent>
+                {SUBJECTS.map((s) => (
+                  <SelectItem key={s} value={s}>
+                    {s}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </Field>
 
           <Field label="Specific topic (optional)" className="sm:col-span-2">
@@ -189,16 +237,6 @@ export default function ActivityGenerator() {
             </Select>
           </Field>
 
-          <Field label="Number of exercises" error={form.formState.errors.num_exercises?.message}>
-            <Input
-              type="number"
-              min={1}
-              max={50}
-              className="font-mono"
-              {...form.register("num_exercises", { valueAsNumber: true })}
-            />
-          </Field>
-
           <Field label="Link to classroom (optional)">
             <Select
               value={form.watch("classroom_id")}
@@ -216,12 +254,27 @@ export default function ActivityGenerator() {
               </SelectContent>
             </Select>
           </Field>
+
+          <Field label={`Number of exercises: ${numExercises}`} error={form.formState.errors.num_exercises?.message}>
+            <Slider
+              className="mt-2.5"
+              min={1}
+              max={50}
+              step={1}
+              value={[numExercises]}
+              onValueChange={([v]) => form.setValue("num_exercises", v, { shouldValidate: true })}
+            />
+          </Field>
         </div>
 
         <Separator />
 
         <div className="grid gap-5 sm:grid-cols-2 sm:items-end">
-          <Field label="Exam name" error={form.formState.errors.exam_name?.message}>
+          <Field
+            label="Exam name"
+            error={form.formState.errors.exam_name?.message}
+            hint={!examNameTouched ? "AI will suggest a title based on the topic" : undefined}
+          >
             <Input
               {...form.register("exam_name", {
                 onChange: () => setExamNameTouched(true),
@@ -260,11 +313,13 @@ export default function ActivityGenerator() {
 function Field({
   label,
   error,
+  hint,
   className,
   children,
 }: {
   label: string
   error?: string
+  hint?: string
   className?: string
   children: React.ReactNode
 }) {
@@ -273,6 +328,7 @@ function Field({
       <Label>{label}</Label>
       {children}
       {error && <p className="text-xs text-destructive">{error}</p>}
+      {!error && hint && <p className="text-xs text-muted-foreground">{hint}</p>}
     </div>
   )
 }

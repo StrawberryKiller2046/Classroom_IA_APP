@@ -28,6 +28,9 @@ interface GenerateRequest {
   exam_name: string
   include_answer_sheet: boolean
   classroom_id?: string | null
+  // When true, Gemini's own suggested title (based on the actual exam
+  // content) is saved instead of the client's placeholder exam_name.
+  use_ai_title?: boolean
 }
 
 Deno.serve(async (req) => {
@@ -82,7 +85,8 @@ Deno.serve(async (req) => {
       }
     }
 
-    const exercises = await callGemini(geminiApiKey, body)
+    const generated = await callGemini(geminiApiKey, body)
+    const { exercises } = generated
 
     const answerKey: Record<string, string> = {}
     for (const ex of exercises) {
@@ -94,7 +98,7 @@ Deno.serve(async (req) => {
       .insert({
         user_id: userId,
         classroom_id: body.classroom_id ?? null,
-        exam_name: body.exam_name,
+        exam_name: body.use_ai_title && generated.exam_name ? generated.exam_name : body.exam_name,
         subject: body.subject,
         country: body.country,
         education_level: body.education_level,
@@ -145,7 +149,10 @@ interface GeminiExercise {
   correct_answer: string
 }
 
-async function callGemini(apiKey: string, req: GenerateRequest): Promise<GeminiExercise[]> {
+async function callGemini(
+  apiKey: string,
+  req: GenerateRequest
+): Promise<{ exam_name: string; exercises: GeminiExercise[] }> {
   const schema = {
     type: "OBJECT",
     properties: {
@@ -184,7 +191,10 @@ For "mc" (multiple choice) exercises, include an "options" array of 3-5 choices 
 For "tf" (true/false) exercises, set "correct_answer" to exactly "True" or "False".
 For "short" (short answer) exercises, set "correct_answer" to a concise expected answer.
 Give every exercise a unique "id" like "q1", "q2", etc.
-Return ONLY the structured JSON — no extra commentary.`
+
+Also set "exam_name" to a short, specific title (4-8 words) that describes what this exam is actually about, in the language most natural for the country and subject. Write it like a real exam title a teacher would print at the top of the page, for example "Fractions in Everyday Life" or "La Revolucion Mexicana: Causas y Consecuencias". Never use a generic "Subject - Grade - Date" format, and never mention the country, grade, or difficulty level in the title itself.
+
+Return ONLY the structured JSON, no extra commentary.`
 
   const response = await fetch(
     `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${apiKey}`,
@@ -211,5 +221,5 @@ Return ONLY the structured JSON — no extra commentary.`
   if (!text) throw new Error("Gemini returned no content")
 
   const parsed = JSON.parse(text) as { exam_name: string; exercises: GeminiExercise[] }
-  return parsed.exercises
+  return parsed
 }
