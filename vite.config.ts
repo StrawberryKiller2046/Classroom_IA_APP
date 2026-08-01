@@ -11,6 +11,9 @@ export default defineConfig({
     tailwindcss(),
     VitePWA({
       registerType: 'autoUpdate',
+      // Registered manually via `virtual:pwa-register` in main.tsx so a new
+      // deploy actually takes over open tabs instead of silently caching stale JS.
+      injectRegister: false,
       includeAssets: ['favicon.svg', 'icons/*.png', 'icons/*.svg'],
       manifest: {
         name: 'Classroom Activity Generator',
