@@ -1,6 +1,7 @@
 import { NavLink, Outlet } from "react-router-dom"
-import { GraduationCap, LayoutDashboard, School, Sparkles } from "lucide-react"
+import { FlaskConical, GraduationCap, LayoutDashboard, School, Sparkles } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { isSupabaseConfigured } from "@/lib/supabase"
 
 const NAV_ITEMS = [
   { to: "/", label: "Generator", icon: Sparkles, end: true },
@@ -49,6 +50,13 @@ export default function AppShell() {
             <span className="font-semibold tracking-tight">Classroom AI</span>
           </div>
         </header>
+
+        {!isSupabaseConfigured && (
+          <div className="flex items-center gap-2 border-b bg-warning/15 px-4 py-2 text-sm text-warning-foreground">
+            <FlaskConical className="size-4 shrink-0" />
+            <span>Demo mode — sample data stored on this device only. Connect Supabase to make it real.</span>
+          </div>
+        )}
 
         <main className="flex-1 p-4 md:p-8">
           <div className="mx-auto w-full max-w-5xl">

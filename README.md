@@ -2,6 +2,10 @@
 
 A mobile-installable PWA for teachers: generate curriculum-aligned exams with AI, export them to PDF, manage classrooms and students, and grade submissions in class with a quick-capture screen that pulls answers straight from the database.
 
+## Demo mode
+
+Without `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY` set, the app runs entirely on local sample data (`src/lib/mock-store.ts`, persisted to `localStorage`) instead of erroring out — a seeded classroom, students, and a graded activity are there from the first load, and every screen (including "AI" generation, which returns clearly-labeled `[Demo]` placeholder questions) is fully clickable. This is what's live on GitHub Pages right now. Setting those two env vars — locally in `.env`, or as repo secrets for the deployed build — switches every screen over to the real Supabase-backed implementation with no other code changes.
+
 ## Tech stack
 
 - **Frontend:** React + Vite + TypeScript + Tailwind CSS v4 + shadcn/ui

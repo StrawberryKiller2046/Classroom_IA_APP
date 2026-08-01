@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react"
 import type { Session, User } from "@supabase/supabase-js"
-import { supabase } from "@/lib/supabase"
+import { isSupabaseConfigured, supabase } from "@/lib/supabase"
 
 interface AuthContextValue {
   user: User | null
@@ -12,11 +12,14 @@ const AuthContext = createContext<AuthContextValue | undefined>(undefined)
 
 // No login screen: every visitor gets a Supabase anonymous session automatically,
 // so RLS (auth.uid()-scoped rows) keeps working without asking anyone to sign in.
+// Without Supabase configured, the app runs entirely on local demo data instead
+// (see lib/mock-store.ts / lib/api.ts), so there's no session to create here.
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null)
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(isSupabaseConfigured)
 
   useEffect(() => {
+    if (!isSupabaseConfigured) return
     let cancelled = false
 
     async function ensureSession() {
