@@ -10,6 +10,7 @@ import {
 import type { Activity, Classroom, GradingResult, Student } from "@/types/database"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { Stat, StatStrip } from "@/components/ui/stat"
 import {
   Select,
   SelectContent,
@@ -108,15 +109,15 @@ export default function Dashboard() {
         <p className="text-muted-foreground">Compare performance across all of your classrooms.</p>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-        <StatCard label="Classrooms" value={String(totals.classrooms)} />
-        <StatCard label="Students" value={String(totals.students)} />
-        <StatCard label="Activities" value={String(totals.activities)} />
-        <StatCard
+      <StatStrip className="sm:grid-cols-4">
+        <Stat label="Classrooms" value={String(totals.classrooms)} />
+        <Stat label="Students" value={String(totals.students)} />
+        <Stat label="Activities" value={String(totals.activities)} />
+        <Stat
           label="Overall average"
-          value={totals.average !== null ? `${totals.average.toFixed(0)}%` : "—"}
+          value={totals.average !== null ? `${totals.average.toFixed(0)}%` : "-"}
         />
-      </div>
+      </StatStrip>
 
       <div className="flex flex-wrap gap-3">
         <Select value={subjectFilter} onValueChange={setSubjectFilter}>
@@ -178,12 +179,12 @@ export default function Dashboard() {
                   {classroom.name}
                 </CardTitle>
               </CardHeader>
-              <CardContent className="grid gap-2">
+              <CardContent className="grid gap-3">
                 <div className="flex flex-wrap gap-1.5">
                   <Badge variant="secondary">{classroom.subject}</Badge>
                   <Badge variant="secondary">{classroom.grade}</Badge>
                 </div>
-                <div className="mt-1 flex justify-between text-sm text-muted-foreground">
+                <div className="flex justify-between border-t pt-3 font-mono text-sm text-muted-foreground">
                   <span>{studentCount} students</span>
                   <span>{activityCount} activities</span>
                   <span>{average !== null ? `${average.toFixed(0)}% avg` : "No grades yet"}</span>
@@ -194,16 +195,5 @@ export default function Dashboard() {
         ))}
       </div>
     </div>
-  )
-}
-
-function StatCard({ label, value }: { label: string; value: string }) {
-  return (
-    <Card>
-      <CardContent className="p-4">
-        <p className="text-sm text-muted-foreground">{label}</p>
-        <p className="text-2xl font-bold">{value}</p>
-      </CardContent>
-    </Card>
   )
 }

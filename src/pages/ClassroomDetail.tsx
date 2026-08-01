@@ -16,6 +16,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Stat, StatStrip } from "@/components/ui/stat"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {
   Dialog,
@@ -308,11 +309,11 @@ function ResultsPanel({
 
   return (
     <div className="grid gap-4">
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
-        <StatCard label="Average score" value={`${average.toFixed(0)}%`} />
-        <StatCard label="Graded submissions" value={String(results.length)} />
-        <StatCard label="Students graded" value={String(byStudent.length)} />
-      </div>
+      <StatStrip className="sm:grid-cols-3">
+        <Stat label="Average score" value={`${average.toFixed(0)}%`} />
+        <Stat label="Graded submissions" value={String(results.length)} />
+        <Stat label="Students graded" value={String(byStudent.length)} />
+      </StatStrip>
 
       {mostMissed.length > 0 && (
         <Card>
@@ -338,25 +339,14 @@ function ResultsPanel({
           {byStudent.map(({ student, avg, count }) => (
             <div key={student.id} className="flex items-center justify-between px-4 py-3 text-sm">
               <span className="font-medium">{student.name}</span>
-              <span className="text-muted-foreground">
-                {avg?.toFixed(0)}% avg · {count} graded
+              <span className="font-mono text-muted-foreground">
+                {avg?.toFixed(0)}% avg, {count} graded
               </span>
             </div>
           ))}
         </CardContent>
       </Card>
     </div>
-  )
-}
-
-function StatCard({ label, value }: { label: string; value: string }) {
-  return (
-    <Card>
-      <CardContent className="p-4">
-        <p className="text-sm text-muted-foreground">{label}</p>
-        <p className="text-2xl font-bold">{value}</p>
-      </CardContent>
-    </Card>
   )
 }
 

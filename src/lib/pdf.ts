@@ -25,7 +25,7 @@ export function exportActivityToPdf(activity: Activity, options: { includeAnswer
   doc.setFontSize(10)
   doc.setTextColor(90)
   doc.text(
-    `${activity.subject} — ${activity.grade} — ${activity.education_level} — ${activity.country}`,
+    `${activity.subject}  |  ${activity.grade}  |  ${activity.education_level}  |  ${activity.country}`,
     marginX,
     y
   )

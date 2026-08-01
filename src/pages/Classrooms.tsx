@@ -7,7 +7,8 @@ import type { Classroom } from "@/types/database"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
 import {
   Dialog,
   DialogContent,
@@ -75,14 +76,18 @@ export default function Classrooms() {
           <Link key={classroom.id} to={`/classrooms/${classroom.id}`}>
             <Card className="h-full transition-colors hover:border-primary/40 hover:bg-accent/30">
               <CardHeader>
-                <CardTitle className="text-base">{classroom.name}</CardTitle>
-                <CardDescription>
-                  {classroom.subject} · {classroom.grade}
-                </CardDescription>
+                <CardTitle className="flex items-center gap-2 text-base">
+                  <School className="size-4 text-muted-foreground" />
+                  {classroom.name}
+                </CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                  <Users className="size-4" />
+              <CardContent className="grid gap-3">
+                <div className="flex flex-wrap gap-1.5">
+                  <Badge variant="secondary">{classroom.subject}</Badge>
+                  <Badge variant="secondary">{classroom.grade}</Badge>
+                </div>
+                <div className="flex items-center gap-1.5 border-t pt-3 font-mono text-sm text-muted-foreground">
+                  <Users className="size-3.5" />
                   {studentCounts[classroom.id] ?? 0} students
                 </div>
               </CardContent>

@@ -18,7 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Separator } from "@/components/ui/separator"
 import ActivityResult from "@/components/activities/ActivityResult"
 
 const formSchema = z.object({
@@ -102,153 +102,155 @@ export default function ActivityGenerator() {
   }
 
   return (
-    <div className="grid gap-6">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Activity Generator</h1>
-        <p className="text-muted-foreground">
-          Describe the exam you need and let AI draft it in seconds.
-        </p>
+    <div className="grid gap-8">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <h1 className="text-2xl font-semibold tracking-tight">Activity Generator</h1>
+          <p className="text-muted-foreground">
+            Describe the exam you need and let AI draft it in seconds.
+          </p>
+        </div>
+        {usage && (
+          <span className="rounded-full border bg-muted/40 px-3 py-1 font-mono text-xs text-muted-foreground">
+            {usage.generations_used} generations this month
+          </span>
+        )}
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Exam details</CardTitle>
-          <CardDescription>
-            {usage ? `${usage.generations_used} generations used this month` : " "}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-5">
-            <div className="grid gap-4 sm:grid-cols-2">
-              <Field label="Country / curriculum region" error={form.formState.errors.country?.message}>
-                <Input placeholder="e.g. Spain, Mexico, Ontario (Canada)" {...form.register("country")} />
-              </Field>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-6">
+        <div className="grid gap-5 sm:grid-cols-2">
+          <Field label="Country / curriculum region" error={form.formState.errors.country?.message}>
+            <Input placeholder="e.g. Spain, Mexico, Ontario (Canada)" {...form.register("country")} />
+          </Field>
 
-              <Field label="Education level" error={form.formState.errors.education_level?.message}>
-                <Select
-                  value={form.watch("education_level")}
-                  onValueChange={(v) => form.setValue("education_level", v, { shouldValidate: true })}
-                >
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select a level" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {EDUCATION_LEVELS.map((level) => (
-                      <SelectItem key={level} value={level}>
-                        {level}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </Field>
+          <Field label="Education level" error={form.formState.errors.education_level?.message}>
+            <Select
+              value={form.watch("education_level")}
+              onValueChange={(v) => form.setValue("education_level", v, { shouldValidate: true })}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select a level" />
+              </SelectTrigger>
+              <SelectContent>
+                {EDUCATION_LEVELS.map((level) => (
+                  <SelectItem key={level} value={level}>
+                    {level}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </Field>
 
-              <Field label="Grade / year" error={form.formState.errors.grade?.message}>
-                <Input placeholder="e.g. 5th Grade, Year 10" {...form.register("grade")} />
-              </Field>
+          <Field label="Grade / year" error={form.formState.errors.grade?.message}>
+            <Input placeholder="e.g. 5th Grade, Year 10" {...form.register("grade")} />
+          </Field>
 
-              <Field label="Subject" error={form.formState.errors.subject?.message}>
-                <Input placeholder="e.g. Mathematics, Biology" {...form.register("subject")} />
-              </Field>
+          <Field label="Subject" error={form.formState.errors.subject?.message}>
+            <Input placeholder="e.g. Mathematics, Biology" {...form.register("subject")} />
+          </Field>
 
-              <Field label="Specific topic (optional)" className="sm:col-span-2">
-                <Input placeholder="e.g. Fractions, Photosynthesis" {...form.register("topic")} />
-              </Field>
+          <Field label="Specific topic (optional)" className="sm:col-span-2">
+            <Input placeholder="e.g. Fractions, Photosynthesis" {...form.register("topic")} />
+          </Field>
 
-              <Field label="Exercise type" error={form.formState.errors.exercise_type?.message}>
-                <Select
-                  value={form.watch("exercise_type")}
-                  onValueChange={(v) => form.setValue("exercise_type", v, { shouldValidate: true })}
-                >
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select a type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {EXERCISE_TYPES.map((type) => (
-                      <SelectItem key={type.value} value={type.value}>
-                        {type.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </Field>
+          <Field label="Exercise type" error={form.formState.errors.exercise_type?.message}>
+            <Select
+              value={form.watch("exercise_type")}
+              onValueChange={(v) => form.setValue("exercise_type", v, { shouldValidate: true })}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select a type" />
+              </SelectTrigger>
+              <SelectContent>
+                {EXERCISE_TYPES.map((type) => (
+                  <SelectItem key={type.value} value={type.value}>
+                    {type.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </Field>
 
-              <Field label="Difficulty" error={form.formState.errors.difficulty?.message}>
-                <Select
-                  value={form.watch("difficulty")}
-                  onValueChange={(v) => form.setValue("difficulty", v, { shouldValidate: true })}
-                >
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select difficulty" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {DIFFICULTIES.map((d) => (
-                      <SelectItem key={d} value={d}>
-                        {d}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </Field>
+          <Field label="Difficulty" error={form.formState.errors.difficulty?.message}>
+            <Select
+              value={form.watch("difficulty")}
+              onValueChange={(v) => form.setValue("difficulty", v, { shouldValidate: true })}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select difficulty" />
+              </SelectTrigger>
+              <SelectContent>
+                {DIFFICULTIES.map((d) => (
+                  <SelectItem key={d} value={d}>
+                    {d}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </Field>
 
-              <Field label="Number of exercises" error={form.formState.errors.num_exercises?.message}>
-                <Input
-                  type="number"
-                  min={1}
-                  max={50}
-                  {...form.register("num_exercises", { valueAsNumber: true })}
-                />
-              </Field>
+          <Field label="Number of exercises" error={form.formState.errors.num_exercises?.message}>
+            <Input
+              type="number"
+              min={1}
+              max={50}
+              className="font-mono"
+              {...form.register("num_exercises", { valueAsNumber: true })}
+            />
+          </Field>
 
-              <Field label="Link to classroom (optional)">
-                <Select
-                  value={form.watch("classroom_id")}
-                  onValueChange={(v) => form.setValue("classroom_id", v)}
-                >
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="No classroom" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {classrooms.map((c) => (
-                      <SelectItem key={c.id} value={c.id}>
-                        {c.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </Field>
+          <Field label="Link to classroom (optional)">
+            <Select
+              value={form.watch("classroom_id")}
+              onValueChange={(v) => form.setValue("classroom_id", v)}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="No classroom" />
+              </SelectTrigger>
+              <SelectContent>
+                {classrooms.map((c) => (
+                  <SelectItem key={c.id} value={c.id}>
+                    {c.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </Field>
+        </div>
+
+        <Separator />
+
+        <div className="grid gap-5 sm:grid-cols-2 sm:items-end">
+          <Field label="Exam name" error={form.formState.errors.exam_name?.message}>
+            <Input
+              {...form.register("exam_name", {
+                onChange: () => setExamNameTouched(true),
+              })}
+            />
+          </Field>
+
+          <div className="flex items-center justify-between gap-4 rounded-lg border p-3.5">
+            <div>
+              <Label htmlFor="include_answer_sheet" className="text-sm font-medium">
+                Include answer sheet
+              </Label>
+              <p className="text-sm text-muted-foreground">
+                Saved to the database for the Auto-Corrector.
+              </p>
             </div>
+            <Switch
+              id="include_answer_sheet"
+              checked={form.watch("include_answer_sheet")}
+              onCheckedChange={(v) => form.setValue("include_answer_sheet", v)}
+            />
+          </div>
+        </div>
 
-            <Field label="Exam name" error={form.formState.errors.exam_name?.message}>
-              <Input
-                {...form.register("exam_name", {
-                  onChange: () => setExamNameTouched(true),
-                })}
-              />
-            </Field>
-
-            <div className="flex items-center justify-between rounded-lg border p-4">
-              <div>
-                <Label htmlFor="include_answer_sheet" className="text-sm font-medium">
-                  Include answer sheet
-                </Label>
-                <p className="text-sm text-muted-foreground">
-                  Saves the answer key to the database for the Auto-Corrector, and can be printed on the PDF.
-                </p>
-              </div>
-              <Switch
-                id="include_answer_sheet"
-                checked={form.watch("include_answer_sheet")}
-                onCheckedChange={(v) => form.setValue("include_answer_sheet", v)}
-              />
-            </div>
-
-            <Button type="submit" size="lg" disabled={submitting} className="justify-self-start">
-              {submitting ? <Loader2 className="animate-spin" /> : <Sparkles />}
-              {submitting ? "Generating…" : "Generate activity"}
-            </Button>
-          </form>
-        </CardContent>
-      </Card>
+        <Button type="submit" size="lg" disabled={submitting} className="justify-self-start">
+          {submitting ? <Loader2 className="animate-spin" /> : <Sparkles />}
+          {submitting ? "Generating..." : "Generate activity"}
+        </Button>
+      </form>
 
       {result && <ActivityResult activity={result} />}
     </div>

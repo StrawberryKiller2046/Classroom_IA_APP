@@ -4,7 +4,7 @@ import { useAuth } from "@/lib/auth-context"
 import { isSupabaseConfigured } from "@/lib/supabase"
 
 // Waits for the automatic anonymous session before rendering the app.
-// There's no login screen — see AuthProvider for how the session is created.
+// There's no login screen; see AuthProvider for how the session is created.
 // When Supabase isn't configured yet, the app runs on local demo data
 // instead (see lib/mock-store.ts), so there's no session to wait for.
 export default function ProtectedRoute({ children }: { children: ReactNode }) {

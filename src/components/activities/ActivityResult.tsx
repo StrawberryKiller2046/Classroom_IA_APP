@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { CheckCircle2, Download, Eye, EyeOff } from "lucide-react"
+import { Check, CheckCircle2, Circle, CircleCheck, Download, Eye, EyeOff } from "lucide-react"
 import type { Activity } from "@/types/database"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -41,22 +41,33 @@ export default function ActivityResult({ activity }: { activity: Activity }) {
           </Button>
         </div>
       </CardHeader>
-      <CardContent className="grid gap-4">
+      <CardContent className="divide-y p-0 [&>*]:px-6 [&>*]:py-5">
         {activity.exercises.map((exercise, index) => (
-          <div key={exercise.id} className="rounded-lg border bg-card p-4">
-            <p className="font-medium">
-              {index + 1}. {exercise.question}
+          <div key={exercise.id}>
+            <p className="flex gap-2.5 font-medium">
+              <span className="font-mono text-sm text-muted-foreground">
+                {String(index + 1).padStart(2, "0")}
+              </span>
+              {exercise.question}
             </p>
             {exercise.type === "mc" && exercise.options && (
-              <ul className="mt-2 grid gap-1 text-sm text-muted-foreground">
+              <ul className="mt-3 grid gap-1.5 pl-8 text-sm text-muted-foreground">
                 {exercise.options.map((option) => {
                   const isCorrect = showAnswers && option === exercise.correct_answer
                   return (
                     <li
                       key={option}
-                      className={isCorrect ? "font-medium text-success" : undefined}
+                      className={
+                        isCorrect
+                          ? "flex items-center gap-2 font-medium text-success"
+                          : "flex items-center gap-2"
+                      }
                     >
-                      {isCorrect ? "✓ " : "○ "}
+                      {isCorrect ? (
+                        <CircleCheck className="size-4 shrink-0" />
+                      ) : (
+                        <Circle className="size-4 shrink-0" />
+                      )}
                       {option}
                     </li>
                   )
@@ -64,16 +75,22 @@ export default function ActivityResult({ activity }: { activity: Activity }) {
               </ul>
             )}
             {exercise.type === "tf" && (
-              <p className="mt-2 text-sm text-muted-foreground">
-                ○ True &nbsp;&nbsp; ○ False
-              </p>
+              <div className="mt-3 flex gap-5 pl-8 text-sm text-muted-foreground">
+                <span className="flex items-center gap-2">
+                  <Circle className="size-4" /> True
+                </span>
+                <span className="flex items-center gap-2">
+                  <Circle className="size-4" /> False
+                </span>
+              </div>
             )}
             {exercise.type === "short" && (
-              <div className="mt-2 h-px w-2/3 bg-border" />
+              <div className="mt-3 ml-8 h-px w-2/3 bg-border" />
             )}
             {showAnswers && exercise.type !== "mc" && (
-              <p className="mt-2 text-sm font-medium text-success">
-                Answer: {exercise.correct_answer}
+              <p className="mt-3 flex items-center gap-2 pl-8 text-sm font-medium text-success">
+                <Check className="size-4" />
+                {exercise.correct_answer}
               </p>
             )}
           </div>

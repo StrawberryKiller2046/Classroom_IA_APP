@@ -13,13 +13,13 @@ export default function AppShell() {
   return (
     <div className="flex min-h-svh flex-col bg-muted/30 md:flex-row">
       <aside className="hidden shrink-0 border-r bg-background md:flex md:w-60 md:flex-col">
-        <div className="flex items-center gap-2 border-b px-5 py-4">
+        <div className="flex items-center gap-2.5 border-b px-5 py-4">
           <div className="flex size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-            <GraduationCap className="size-4.5" />
+            <GraduationCap className="size-4.5" strokeWidth={2} />
           </div>
           <span className="font-semibold tracking-tight">Classroom AI</span>
         </div>
-        <nav className="flex flex-1 flex-col gap-1 p-3">
+        <nav className="flex flex-1 flex-col gap-0.5 p-3">
           {NAV_ITEMS.map((item) => (
             <NavLink
               key={item.to}
@@ -27,14 +27,14 @@ export default function AppShell() {
               end={item.end}
               className={({ isActive }) =>
                 cn(
-                  "flex items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium transition-colors",
+                  "relative flex items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium transition-colors duration-150",
                   isActive
-                    ? "bg-primary/10 text-primary"
+                    ? "bg-primary/8 text-primary before:absolute before:inset-y-1.5 before:left-0 before:w-0.5 before:rounded-full before:bg-primary"
                     : "text-muted-foreground hover:bg-muted hover:text-foreground"
                 )
               }
             >
-              <item.icon className="size-4" />
+              <item.icon className="size-4" strokeWidth={2} />
               {item.label}
             </NavLink>
           ))}
@@ -45,7 +45,7 @@ export default function AppShell() {
         <header className="flex items-center justify-between border-b bg-background px-4 py-3 md:hidden">
           <div className="flex items-center gap-2">
             <div className="flex size-7 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-              <GraduationCap className="size-4" />
+              <GraduationCap className="size-4" strokeWidth={2} />
             </div>
             <span className="font-semibold tracking-tight">Classroom AI</span>
           </div>
@@ -53,8 +53,8 @@ export default function AppShell() {
 
         {!isSupabaseConfigured && (
           <div className="flex items-center gap-2 border-b bg-warning/15 px-4 py-2 text-sm text-warning-foreground">
-            <FlaskConical className="size-4 shrink-0" />
-            <span>Demo mode — sample data stored on this device only. Connect Supabase to make it real.</span>
+            <FlaskConical className="size-4 shrink-0" strokeWidth={2} />
+            <span>Demo mode: sample data stored on this device only. Connect Supabase to make it real.</span>
           </div>
         )}
 
@@ -73,12 +73,12 @@ export default function AppShell() {
             end={item.end}
             className={({ isActive }) =>
               cn(
-                "flex flex-1 flex-col items-center gap-1 py-2.5 text-xs font-medium",
+                "flex flex-1 flex-col items-center gap-1 py-2.5 text-xs font-medium transition-colors duration-150",
                 isActive ? "text-primary" : "text-muted-foreground"
               )
             }
           >
-            <item.icon className="size-5" />
+            <item.icon className="size-5" strokeWidth={2} />
             {item.label}
           </NavLink>
         ))}

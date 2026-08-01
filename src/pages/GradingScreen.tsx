@@ -69,7 +69,7 @@ export default function GradingScreen() {
         answers,
         score,
       })
-      toast.success(`Saved — ${student.name} scored ${score.toFixed(0)}%`)
+      toast.success(`Saved: ${student.name} scored ${score.toFixed(0)}%`)
       navigate(`/classrooms/${classroomId}`)
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Failed to save result")
@@ -97,8 +97,10 @@ export default function GradingScreen() {
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">
-            Grading <span className="text-primary">{student.name}</span> — {activity.exam_name}
+          <CardTitle className="text-base font-normal text-muted-foreground">
+            Grading <span className="font-semibold text-foreground">{student.name}</span>
+            <span className="mx-1.5 text-muted-foreground/40">/</span>
+            {activity.exam_name}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -121,7 +123,7 @@ export default function GradingScreen() {
               </div>
               <div className="grid gap-2">
                 {activity.exercises.map((ex, i) => {
-                  const given = answers[ex.id] ?? "—"
+                  const given = answers[ex.id] || "No answer"
                   const correctAnswer = activity.answer_key?.[ex.id] ?? ex.correct_answer
                   const correct = answers[ex.id] && isCorrectAnswer(answers[ex.id], correctAnswer, ex.type)
                   return (
