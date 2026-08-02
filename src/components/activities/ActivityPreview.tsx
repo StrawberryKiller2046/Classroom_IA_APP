@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { Eye, EyeOff, FileCheck2, FileText, Loader2, Sparkles } from "lucide-react"
 import type { Activity } from "@/types/database"
+import { cn } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
@@ -18,14 +19,18 @@ export default function ActivityPreview({
 
   if (loading) {
     return (
-      <EmptyPanel icon={<Loader2 className="size-7 animate-spin" />} text="Generating your activity..." />
+      <WorksheetGhost
+        icon={<Loader2 className="size-6 animate-spin" />}
+        text="Generating your activity..."
+        pulse
+      />
     )
   }
 
   if (!activity) {
     return (
-      <EmptyPanel
-        icon={<Sparkles className="size-7" />}
+      <WorksheetGhost
+        icon={<Sparkles className="size-6" />}
         text="Fill out the form and generate an activity to preview it here."
       />
     )
@@ -80,11 +85,33 @@ export default function ActivityPreview({
   )
 }
 
-function EmptyPanel({ icon, text }: { icon: React.ReactNode; text: string }) {
+/** Renders the same worksheet shape (name/teacher/date, title, a few
+ * question blocks) in muted skeleton form, with a message overlaid — so the
+ * idle and loading states preview the page layout instead of showing a
+ * generic empty box. */
+function WorksheetGhost({ icon, text, pulse }: { icon: React.ReactNode; text: string; pulse?: boolean }) {
   return (
-    <Card className="flex h-full min-h-80 flex-col items-center justify-center gap-3 border-dashed p-8 text-center">
-      <div className="text-muted-foreground">{icon}</div>
-      <p className="max-w-xs text-sm text-muted-foreground">{text}</p>
+    <Card className="relative min-h-96 gap-0 overflow-hidden py-0">
+      <div className={cn("p-6 sm:p-8", pulse && "animate-pulse")}>
+        <div className="mb-6 grid grid-cols-3 gap-6 border-b pb-5">
+          <div className="h-2 w-10 rounded-full bg-muted" />
+          <div className="h-2 w-12 rounded-full bg-muted" />
+          <div className="h-2 w-8 rounded-full bg-muted" />
+        </div>
+        <div className="mb-8 h-5 w-2/3 rounded-full bg-muted" />
+        <div className="grid gap-6">
+          {[100, 70, 85, 55].map((width, i) => (
+            <div key={i} className="grid gap-2">
+              <div className="h-2.5 rounded-full bg-muted" style={{ width: `${width}%` }} />
+              <div className="h-2.5 w-2/5 rounded-full bg-muted/70" />
+            </div>
+          ))}
+        </div>
+      </div>
+      <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-gradient-to-b from-transparent via-card/90 to-card px-8 text-center">
+        <div className="text-muted-foreground">{icon}</div>
+        <p className="max-w-64 text-sm text-muted-foreground">{text}</p>
+      </div>
     </Card>
   )
 }

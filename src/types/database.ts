@@ -116,6 +116,18 @@ export const GRADES = [
   "3rd Year (University)", "4th Year (University)",
 ] as const
 
+/** Best-guess education level for a grade, so the field can be pre-filled
+ * instead of asking twice for overlapping information. Always shown and
+ * editable, never applied silently. */
+export function inferEducationLevel(grade: string): (typeof EDUCATION_LEVELS)[number] | null {
+  const index = GRADES.indexOf(grade as (typeof GRADES)[number])
+  if (index === -1) return null
+  if (index <= 6) return "Primary"
+  if (index <= 9) return "Lower Secondary"
+  if (index <= 12) return "Upper Secondary"
+  return "Higher Education"
+}
+
 export const SUBJECTS = [
   "Mathematics", "Science", "Biology", "Chemistry", "Physics",
   "English / Language Arts", "Native Language / Literature", "History",
