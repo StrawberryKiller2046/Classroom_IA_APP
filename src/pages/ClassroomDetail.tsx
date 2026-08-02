@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { Link, Navigate, useNavigate, useParams } from "react-router-dom"
-import { ArrowLeft, ChevronDown, ClipboardCheck, Plus, RotateCcw, Trash2, Users } from "lucide-react"
+import { ArrowLeft, ChevronDown, ClipboardCheck, Download, Plus, RotateCcw, Trash2, Users } from "lucide-react"
 import { toast } from "sonner"
 import {
   createStudent,
@@ -12,6 +12,7 @@ import {
 } from "@/lib/api"
 import type { Activity, Classroom, GradingResult, Student } from "@/types/database"
 import { cn } from "@/lib/utils"
+import { downloadExcel } from "@/lib/excel"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -19,6 +20,13 @@ import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Stat, StatStrip } from "@/components/ui/stat"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import {
   Dialog,
   DialogContent,
@@ -112,7 +120,12 @@ export default function ClassroomDetail() {
         </TabsContent>
 
         <TabsContent value="results" className="mt-4">
-          <ResultsPanel activities={activities} students={students} results={results} />
+          <ResultsPanel
+            classroomName={classroom.name}
+            activities={activities}
+            students={students}
+            results={results}
+          />
         </TabsContent>
       </Tabs>
     </div>
@@ -349,24 +362,56 @@ function scoreColor(score: number) {
   return "text-destructive"
 }
 
+// Colors a student's average relative to the group's own average for this
+// view, rather than against a fixed pass/fail threshold — a 60% average
+// reads as strong if the group average is 45%, and weak if it's 80%.
+function relativeScoreColor(avg: number, groupAverage: number) {
+  const diff = avg - groupAverage
+  if (diff <= -8) return "text-destructive"
+  if (diff >= 8) return "text-success"
+  return "text-muted-foreground"
+}
+
 function ResultsPanel({
+  classroomName,
   activities,
   students,
   results,
 }: {
+  classroomName: string
   activities: Activity[]
   students: Student[]
   results: GradingResult[]
 }) {
+  const subjects = Array.from(new Set(activities.map((a) => a.subject))).sort()
+  const [subjectFilter, setSubjectFilter] = useState("all")
+
   if (results.length === 0) {
     return <EmptyState icon={ClipboardCheck} text="No graded results yet." />
   }
 
-  const average = results.reduce((sum, r) => sum + Number(r.score), 0) / results.length
+  const activityById = new Map(activities.map((a) => [a.id, a]))
+  const scopedResults =
+    subjectFilter === "all"
+      ? results
+      : results.filter((r) => activityById.get(r.activity_id)?.subject === subjectFilter)
+
+  if (scopedResults.length === 0) {
+    return (
+      <div className="grid gap-4">
+        {subjects.length > 1 && (
+          <ResultsScopeSelect subjects={subjects} value={subjectFilter} onChange={setSubjectFilter} />
+        )}
+        <EmptyState icon={ClipboardCheck} text="No graded results for this subject yet." />
+      </div>
+    )
+  }
+
+  const average = scopedResults.reduce((sum, r) => sum + Number(r.score), 0) / scopedResults.length
 
   const missCounts: Record<string, { question: string; misses: number }> = {}
-  for (const result of results) {
-    const activity = activities.find((a) => a.id === result.activity_id)
+  for (const result of scopedResults) {
+    const activity = activityById.get(result.activity_id)
     if (!activity) continue
     for (const exercise of activity.exercises) {
       const given = result.answers[exercise.id]
@@ -384,20 +429,46 @@ function ResultsPanel({
 
   const byStudent = students
     .map((student) => {
-      const studentResults = results.filter((r) => r.student_id === student.id)
+      const studentResults = scopedResults.filter((r) => r.student_id === student.id)
       const avg = studentResults.length
         ? studentResults.reduce((sum, r) => sum + Number(r.score), 0) / studentResults.length
         : null
       return { student, avg, count: studentResults.length }
     })
     .filter((row) => row.count > 0)
-    .sort((a, b) => (b.avg ?? 0) - (a.avg ?? 0))
+    // Worst results first, so the students who need the most help surface immediately.
+    .sort((a, b) => (a.avg ?? 0) - (b.avg ?? 0))
+
+  const onExport = () => {
+    const scopeLabel = subjectFilter === "all" ? "All subjects" : subjectFilter
+    downloadExcel(
+      byStudent,
+      [
+        { header: "Student", cell: (row) => row.student.name },
+        { header: "Average score (%)", cell: (row) => Math.round(row.avg ?? 0) },
+        { header: "Graded submissions", cell: (row) => row.count },
+      ],
+      `${classroomName}-results-${scopeLabel}`
+    )
+  }
 
   return (
     <div className="grid gap-4">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        {subjects.length > 1 ? (
+          <ResultsScopeSelect subjects={subjects} value={subjectFilter} onChange={setSubjectFilter} />
+        ) : (
+          <div />
+        )}
+        <Button variant="outline" size="sm" onClick={onExport}>
+          <Download />
+          Export to Excel
+        </Button>
+      </div>
+
       <StatStrip className="sm:grid-cols-3">
         <Stat label="Average score" value={`${average.toFixed(0)}%`} />
-        <Stat label="Graded submissions" value={String(results.length)} />
+        <Stat label="Graded submissions" value={String(scopedResults.length)} />
         <Stat label="Students graded" value={String(byStudent.length)} />
       </StatStrip>
 
@@ -425,7 +496,7 @@ function ResultsPanel({
           {byStudent.map(({ student, avg, count }) => (
             <div key={student.id} className="flex items-center justify-between px-4 py-3 text-sm">
               <span className="font-medium">{student.name}</span>
-              <span className="font-mono text-muted-foreground">
+              <span className={cn("font-mono", relativeScoreColor(avg ?? 0, average))}>
                 {avg?.toFixed(0)}% avg, {count} graded
               </span>
             </div>
@@ -433,6 +504,32 @@ function ResultsPanel({
         </CardContent>
       </Card>
     </div>
+  )
+}
+
+function ResultsScopeSelect({
+  subjects,
+  value,
+  onChange,
+}: {
+  subjects: string[]
+  value: string
+  onChange: (value: string) => void
+}) {
+  return (
+    <Select value={value} onValueChange={onChange}>
+      <SelectTrigger className="w-56">
+        <SelectValue placeholder="Scope" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="all">All subjects (whole grade)</SelectItem>
+        {subjects.map((s) => (
+          <SelectItem key={s} value={s}>
+            {s}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
   )
 }
 
