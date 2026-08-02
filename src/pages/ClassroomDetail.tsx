@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { Link, Navigate, useNavigate, useParams } from "react-router-dom"
-import { ArrowLeft, ClipboardCheck, Plus, Trash2, Users } from "lucide-react"
+import { ArrowLeft, ChevronDown, ClipboardCheck, Plus, RotateCcw, Trash2, Users } from "lucide-react"
 import { toast } from "sonner"
 import {
   createStudent,
@@ -11,6 +11,7 @@ import {
   listStudents,
 } from "@/lib/api"
 import type { Activity, Classroom, GradingResult, Student } from "@/types/database"
+import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -105,6 +106,7 @@ export default function ClassroomDetail() {
           <ActivitiesPanel
             activities={activities}
             students={students}
+            results={results}
             onGrade={(activityId, studentId) =>
               navigate(`/classrooms/${classroom.id}/grade/${activityId}/${studentId}`)
             }
@@ -217,12 +219,16 @@ function StudentsPanel({
 function ActivitiesPanel({
   activities,
   students,
+  results,
   onGrade,
 }: {
   activities: Activity[]
   students: Student[]
+  results: GradingResult[]
   onGrade: (activityId: string, studentId: string) => void
 }) {
+  const [expandedId, setExpandedId] = useState<string | null>(null)
+
   if (activities.length === 0) {
     return (
       <EmptyState
@@ -233,34 +239,89 @@ function ActivitiesPanel({
   }
 
   return (
-    <div className="grid gap-4">
-      {activities.map((activity) => (
-        <Card key={activity.id}>
-          <CardHeader>
-            <CardTitle className="text-base">{activity.exam_name}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {students.length === 0 ? (
-              <p className="text-sm text-muted-foreground">Add students to start grading this activity.</p>
-            ) : (
-              <div className="flex flex-wrap gap-2">
-                {students.map((student) => (
-                  <Button
-                    key={student.id}
-                    variant="outline"
-                    size="sm"
-                    onClick={() => onGrade(activity.id, student.id)}
-                  >
-                    Grade {student.name}
-                  </Button>
-                ))}
+    <div className="grid gap-3">
+      {activities.map((activity) => {
+        const expanded = expandedId === activity.id
+        const gradedCount = students.filter((s) =>
+          results.some((r) => r.activity_id === activity.id && r.student_id === s.id)
+        ).length
+
+        return (
+          <Card key={activity.id} className="overflow-hidden py-0">
+            <div
+              role="button"
+              tabIndex={0}
+              onClick={() => setExpandedId(expanded ? null : activity.id)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault()
+                  setExpandedId(expanded ? null : activity.id)
+                }
+              }}
+              className="flex w-full cursor-pointer items-center justify-between gap-4 px-5 py-4 text-left transition-colors hover:bg-accent/30"
+            >
+              <p className="min-w-0 truncate font-medium">{activity.exam_name}</p>
+              <div className="flex shrink-0 items-center gap-3">
+                <span className="font-mono text-xs text-muted-foreground">
+                  {gradedCount}/{students.length} graded
+                </span>
+                <ChevronDown
+                  className={cn("size-4 text-muted-foreground transition-transform", expanded && "rotate-180")}
+                />
+              </div>
+            </div>
+
+            {expanded && (
+              <div className="divide-y border-t">
+                {students.length === 0 ? (
+                  <p className="px-5 py-4 text-sm text-muted-foreground">
+                    Add students to start grading this activity.
+                  </p>
+                ) : (
+                  students.map((student) => {
+                    const result = results.find(
+                      (r) => r.activity_id === activity.id && r.student_id === student.id
+                    )
+                    return (
+                      <div key={student.id} className="flex items-center justify-between gap-4 px-5 py-3">
+                        <span className="font-medium">{student.name}</span>
+                        <div className="flex items-center gap-3">
+                          {result ? (
+                            <>
+                              <span className={cn("font-mono text-sm font-medium", scoreColor(result.score))}>
+                                {Math.round(result.score)}%
+                              </span>
+                              <Button variant="outline" size="sm" onClick={() => onGrade(activity.id, student.id)}>
+                                <RotateCcw />
+                                Regrade
+                              </Button>
+                            </>
+                          ) : (
+                            <>
+                              <span className="text-sm text-muted-foreground">Not graded</span>
+                              <Button variant="outline" size="sm" onClick={() => onGrade(activity.id, student.id)}>
+                                Grade
+                              </Button>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                    )
+                  })
+                )}
               </div>
             )}
-          </CardContent>
-        </Card>
-      ))}
+          </Card>
+        )
+      })}
     </div>
   )
+}
+
+function scoreColor(score: number) {
+  if (score >= 70) return "text-success"
+  if (score >= 50) return "text-warning-foreground"
+  return "text-destructive"
 }
 
 function ResultsPanel({

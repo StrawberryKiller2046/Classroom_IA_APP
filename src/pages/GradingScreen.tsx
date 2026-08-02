@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react"
 import { Link, useNavigate, useParams } from "react-router-dom"
 import { ArrowLeft, ArrowRight, Check, Loader2 } from "lucide-react"
 import { toast } from "sonner"
-import { getActivity, listStudents, saveGradingResult } from "@/lib/api"
+import { getActivity, getGradingResult, listStudents, saveGradingResult } from "@/lib/api"
 import { isCorrectAnswer } from "@/lib/normalize"
 import type { Activity, Student } from "@/types/database"
 import { Button } from "@/components/ui/button"
@@ -19,6 +19,7 @@ export default function GradingScreen() {
   const [answers, setAnswers] = useState<Record<string, string>>({})
   const [step, setStep] = useState(0)
   const [saving, setSaving] = useState(false)
+  const [isRegrade, setIsRegrade] = useState(false)
 
   useEffect(() => {
     if (!activityId || !classroomId) return
@@ -29,7 +30,17 @@ export default function GradingScreen() {
   useEffect(() => {
     setAnswers({})
     setStep(0)
-  }, [studentId])
+    setIsRegrade(false)
+    if (!activityId || !studentId) return
+    // Pre-fill with the previous answers so fixing one mistake doesn't mean
+    // re-entering the whole grading from scratch.
+    getGradingResult(studentId, activityId).then((existing) => {
+      if (existing) {
+        setAnswers(existing.answers)
+        setIsRegrade(true)
+      }
+    })
+  }, [studentId, activityId])
 
   const student = students.find((s) => s.id === studentId)
   const exercise = activity?.exercises[step]
@@ -69,7 +80,11 @@ export default function GradingScreen() {
         answers,
         score,
       })
-      toast.success(`Saved: ${student.name} scored ${score.toFixed(0)}%`)
+      toast.success(
+        isRegrade
+          ? `Updated: ${student.name} now scores ${score.toFixed(0)}%`
+          : `Saved: ${student.name} scored ${score.toFixed(0)}%`
+      )
       navigate(`/classrooms/${classroomId}`)
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Failed to save result")
@@ -98,7 +113,8 @@ export default function GradingScreen() {
       <Card>
         <CardHeader>
           <CardTitle className="text-base font-normal text-muted-foreground">
-            Grading <span className="font-semibold text-foreground">{student.name}</span>
+            {isRegrade ? "Regrading" : "Grading"}{" "}
+            <span className="font-semibold text-foreground">{student.name}</span>
             <span className="mx-1.5 text-muted-foreground/40">/</span>
             {activity.exam_name}
           </CardTitle>
@@ -159,7 +175,7 @@ export default function GradingScreen() {
         ) : (
           <Button onClick={finishAndSave} disabled={saving}>
             {saving ? <Loader2 className="animate-spin" /> : <Check />}
-            Save result
+            {isRegrade ? "Update result" : "Save result"}
           </Button>
         )}
       </div>

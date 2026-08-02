@@ -291,10 +291,31 @@ export const mockApi = {
   }): Promise<GradingResult> {
     await delay()
     const store = load()
-    const result: GradingResult = { id: uid(), graded_at: new Date().toISOString(), ...input }
-    store.gradingResults.push(result)
+    // Regrading a student replaces their previous result for this activity
+    // instead of adding a second row that would skew averages.
+    const existing = store.gradingResults.find(
+      (r) => r.student_id === input.student_id && r.activity_id === input.activity_id
+    )
+    const result: GradingResult = {
+      id: existing?.id ?? uid(),
+      graded_at: new Date().toISOString(),
+      ...input,
+    }
+    if (existing) {
+      Object.assign(existing, result)
+    } else {
+      store.gradingResults.push(result)
+    }
     save(store)
     return result
+  },
+
+  async getGradingResult(studentId: string, activityId: string): Promise<GradingResult | null> {
+    await delay(100)
+    const result = load().gradingResults.find(
+      (r) => r.student_id === studentId && r.activity_id === activityId
+    )
+    return result ?? null
   },
 
   async listGradingResultsForActivity(activityId: string): Promise<GradingResult[]> {

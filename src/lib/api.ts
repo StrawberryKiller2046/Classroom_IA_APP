@@ -131,13 +131,30 @@ export async function saveGradingResult(input: {
   score: number
 }): Promise<GradingResult> {
   if (!isSupabaseConfigured) return mockApi.saveGradingResult(input)
+  // Upsert: regrading a student replaces their previous result for this
+  // activity instead of adding a second row that would skew averages.
   const { data, error } = await supabase
     .from("grading_results")
-    .insert(input)
+    .upsert({ ...input, graded_at: new Date().toISOString() }, { onConflict: "student_id,activity_id" })
     .select()
     .single()
   if (error) throw error
   return data as GradingResult
+}
+
+export async function getGradingResult(
+  studentId: string,
+  activityId: string
+): Promise<GradingResult | null> {
+  if (!isSupabaseConfigured) return mockApi.getGradingResult(studentId, activityId)
+  const { data, error } = await supabase
+    .from("grading_results")
+    .select("*")
+    .eq("student_id", studentId)
+    .eq("activity_id", activityId)
+    .maybeSingle()
+  if (error) throw error
+  return data as GradingResult | null
 }
 
 export async function listGradingResultsForActivity(activityId: string): Promise<GradingResult[]> {
