@@ -226,6 +226,7 @@ function ActivitiesPanel({
   onGrade: (activityId: string, studentId: string) => void
 }) {
   const [expandedId, setExpandedId] = useState<string | null>(null)
+  const [subjectFilter, setSubjectFilter] = useState("all")
 
   if (activities.length === 0) {
     return (
@@ -236,9 +237,27 @@ function ActivitiesPanel({
     )
   }
 
+  const subjects = Array.from(new Set(activities.map((a) => a.subject))).sort()
+  const filteredActivities =
+    subjectFilter === "all" ? activities : activities.filter((a) => a.subject === subjectFilter)
+
   return (
-    <div className="grid gap-3">
-      {activities.map((activity) => {
+    <div className="grid gap-4">
+      {subjects.length > 1 && (
+        <Tabs value={subjectFilter} onValueChange={setSubjectFilter}>
+          <TabsList>
+            <TabsTrigger value="all">All subjects</TabsTrigger>
+            {subjects.map((s) => (
+              <TabsTrigger key={s} value={s}>
+                {s}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </Tabs>
+      )}
+
+      <div className="grid gap-3">
+      {filteredActivities.map((activity) => {
         const expanded = expandedId === activity.id
         const gradedCount = students.filter((s) =>
           results.some((r) => r.activity_id === activity.id && r.student_id === s.id)
@@ -258,7 +277,14 @@ function ActivitiesPanel({
               }}
               className="flex w-full cursor-pointer items-center justify-between gap-4 px-5 py-4 text-left transition-colors hover:bg-accent/30"
             >
-              <p className="min-w-0 truncate font-medium">{activity.exam_name}</p>
+              <div className="flex min-w-0 items-center gap-2">
+                <p className="min-w-0 truncate font-medium">{activity.exam_name}</p>
+                {subjectFilter === "all" && subjects.length > 1 && (
+                  <Badge variant="outline" className="shrink-0">
+                    {activity.subject}
+                  </Badge>
+                )}
+              </div>
               <div className="flex shrink-0 items-center gap-3">
                 <span className="font-mono text-xs text-muted-foreground">
                   {gradedCount}/{students.length} graded
@@ -312,6 +338,7 @@ function ActivitiesPanel({
           </Card>
         )
       })}
+      </div>
     </div>
   )
 }
