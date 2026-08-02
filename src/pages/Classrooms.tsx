@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
-import { Plus, School, Users } from "lucide-react"
+import { Plus, School, Trash2, Users } from "lucide-react"
 import { toast } from "sonner"
-import { createClassroom, listStudents, listClassrooms } from "@/lib/api"
+import { createClassroom, deleteClassroom, listStudents, listClassrooms } from "@/lib/api"
 import type { Classroom } from "@/types/database"
 import { GRADES } from "@/types/database"
 import { Button } from "@/components/ui/button"
@@ -50,6 +50,20 @@ export default function Classrooms() {
     refresh()
   }, [])
 
+  const onDelete = async (classroom: Classroom) => {
+    const ok = window.confirm(
+      `Delete "${classroom.name}"? This also removes its students and grading history. This can't be undone.`
+    )
+    if (!ok) return
+    try {
+      await deleteClassroom(classroom.id)
+      toast.success("Classroom deleted")
+      refresh()
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Failed to delete classroom")
+    }
+  }
+
   return (
     <div className="grid gap-6">
       <div className="flex items-center justify-between">
@@ -83,12 +97,15 @@ export default function Classrooms() {
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {classrooms.map((classroom) => (
-          <Link key={classroom.id} to={`/classrooms/${classroom.id}`}>
-            <Card className="h-full transition-colors hover:border-primary/40 hover:bg-accent/30">
+          <Card
+            key={classroom.id}
+            className="relative h-full transition-colors hover:border-primary/40 hover:bg-accent/30"
+          >
+            <Link to={`/classrooms/${classroom.id}`} className="block">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-base">
-                  <School className="size-4 text-muted-foreground" />
-                  {classroom.name}
+                <CardTitle className="flex items-center gap-2 pr-8 text-base">
+                  <School className="size-4 shrink-0 text-muted-foreground" />
+                  <span className="truncate">{classroom.name}</span>
                 </CardTitle>
               </CardHeader>
               <CardContent className="grid gap-3">
@@ -100,8 +117,17 @@ export default function Classrooms() {
                   {studentCounts[classroom.id] ?? 0} students
                 </div>
               </CardContent>
-            </Card>
-          </Link>
+            </Link>
+            <Button
+              variant="ghost"
+              size="icon"
+              aria-label="Delete classroom"
+              className="absolute right-2 top-2"
+              onClick={() => onDelete(classroom)}
+            >
+              <Trash2 className="size-4 text-muted-foreground" />
+            </Button>
+          </Card>
         ))}
       </div>
     </div>
