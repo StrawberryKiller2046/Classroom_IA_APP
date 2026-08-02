@@ -109,11 +109,7 @@ export const COUNTRIES = [
 
 export const GRADES = [
   "Kindergarten",
-  "1st Grade", "2nd Grade", "3rd Grade", "4th Grade", "5th Grade",
-  "6th Grade", "7th Grade", "8th Grade", "9th Grade", "10th Grade",
-  "11th Grade", "12th Grade",
-  "1st Year (University)", "2nd Year (University)",
-  "3rd Year (University)", "4th Year (University)",
+  "1st Grade", "2nd Grade", "3rd Grade", "4th Grade", "5th Grade", "6th Grade",
 ] as const
 
 /** Best-guess education level for a grade, so the field can be pre-filled
@@ -122,16 +118,14 @@ export const GRADES = [
 export function inferEducationLevel(grade: string): (typeof EDUCATION_LEVELS)[number] | null {
   const index = GRADES.indexOf(grade as (typeof GRADES)[number])
   if (index === -1) return null
-  if (index <= 6) return "Primary"
-  if (index <= 9) return "Lower Secondary"
-  if (index <= 12) return "Upper Secondary"
-  return "Higher Education"
+  return "Primary"
 }
 
+// Subjects actually taught up through 6th grade — no split sciences
+// (biology/chemistry/physics), civics, economics, or philosophy yet.
 export const SUBJECTS = [
-  "Mathematics", "Science", "Biology", "Chemistry", "Physics",
-  "English / Language Arts", "Native Language / Literature", "History",
-  "Geography", "Social Studies", "Civics", "Economics",
-  "Computer Science", "Art", "Music", "Physical Education",
-  "Foreign Language", "Philosophy", "Environmental Science", "Health",
+  "Mathematics", "Science", "English / Language Arts",
+  "Native Language / Literature", "History", "Geography", "Social Studies",
+  "Art", "Music", "Physical Education", "Foreign Language",
+  "Environmental Science", "Health",
 ] as const

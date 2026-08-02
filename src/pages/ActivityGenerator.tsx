@@ -70,7 +70,7 @@ export default function ActivityGenerator() {
       // placeholder — still a normal dropdown, just one fewer forced choice.
       exercise_type: "mixed",
       difficulty: "Medium",
-      num_exercises: 10,
+      num_exercises: 20,
       exam_name: "",
       classroom_id: "",
     },
