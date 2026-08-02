@@ -62,7 +62,7 @@ export async function listClassrooms(): Promise<Classroom[]> {
   return data as Classroom[]
 }
 
-export async function createClassroom(input: Pick<Classroom, "name" | "grade" | "subject">) {
+export async function createClassroom(input: Pick<Classroom, "name" | "grade">) {
   if (!isSupabaseConfigured) return mockApi.createClassroom(input)
   const { data: userData } = await supabase.auth.getUser()
   if (!userData.user) throw new Error("Not authenticated")
@@ -75,7 +75,7 @@ export async function createClassroom(input: Pick<Classroom, "name" | "grade" | 
   return data as Classroom
 }
 
-export async function updateClassroom(id: string, input: Partial<Pick<Classroom, "name" | "grade" | "subject">>) {
+export async function updateClassroom(id: string, input: Partial<Pick<Classroom, "name" | "grade">>) {
   if (!isSupabaseConfigured) return mockApi.updateClassroom(id, input)
   const { data, error } = await supabase.from("classrooms").update(input).eq("id", id).select().single()
   if (error) throw error

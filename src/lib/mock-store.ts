@@ -12,7 +12,7 @@ import type {
 } from "@/types/database"
 import type { GenerateActivityInput } from "@/lib/api"
 
-const STORAGE_KEY = "classroom-ai-demo-v1"
+const STORAGE_KEY = "classroom-ai-demo-v2"
 
 interface Store {
   classrooms: Classroom[]
@@ -63,9 +63,18 @@ function seed(): Store {
   ]
   const answer_key: AnswerKey = Object.fromEntries(exercises.map((e) => [e.id, e.correct_answer]))
 
+  const mathExercises: Exercise[] = [
+    { id: "m1", type: "short", question: "What is 3/4 + 1/4?", correct_answer: "1" },
+    { id: "m2", type: "tf", question: "A square has four equal sides.", correct_answer: "True" },
+    { id: "m3", type: "mc", question: "What is 12 x 4?", options: ["36", "48", "44", "52"], correct_answer: "48" },
+  ]
+  const mathActivityId = "demo-activity-2"
+
   return {
+    // A classroom is just a grade-level group now — no subject attached, so
+    // one roster can have activities from several subjects (demoed below).
     classrooms: [
-      { id: classroomId, user_id: "demo", name: "5A Science", grade: "5th Grade", subject: "Science", created_at: now },
+      { id: classroomId, user_id: "demo", name: "5A", grade: "5th Grade", created_at: now },
     ],
     students: [
       { id: studentIds[0], classroom_id: classroomId, name: "Ava Martinez", notes: null, created_at: now },
@@ -91,6 +100,24 @@ function seed(): Store {
         classroom_id: classroomId,
         created_at: now,
       },
+      {
+        id: mathActivityId,
+        user_id: "demo",
+        exam_name: "Mathematics - 5th Grade - Sample Quiz",
+        subject: "Mathematics",
+        country: "United States",
+        education_level: "Primary",
+        grade: "5th Grade",
+        topic: "Fractions & Multiplication",
+        exercise_type: "mixed",
+        difficulty: "Medium",
+        num_exercises: mathExercises.length,
+        exercises: mathExercises,
+        answer_key: Object.fromEntries(mathExercises.map((e) => [e.id, e.correct_answer])),
+        pdf_url: null,
+        classroom_id: classroomId,
+        created_at: now,
+      },
     ],
     gradingResults: [
       {
@@ -107,6 +134,22 @@ function seed(): Store {
         activity_id: activityId,
         answers: { q1: "Nucleus", q2: "True", q3: "Carbon dioxide", q4: "Mars", q5: "8" },
         score: 60,
+        graded_at: now,
+      },
+      {
+        id: "demo-result-3",
+        student_id: studentIds[0],
+        activity_id: mathActivityId,
+        answers: { m1: "1", m2: "True", m3: "48" },
+        score: 100,
+        graded_at: now,
+      },
+      {
+        id: "demo-result-4",
+        student_id: studentIds[1],
+        activity_id: mathActivityId,
+        answers: { m1: "1/2", m2: "True", m3: "44" },
+        score: 33,
         graded_at: now,
       },
     ],
@@ -225,7 +268,7 @@ export const mockApi = {
     return load().classrooms.slice().sort((a, b) => b.created_at.localeCompare(a.created_at))
   },
 
-  async createClassroom(input: Pick<Classroom, "name" | "grade" | "subject">): Promise<Classroom> {
+  async createClassroom(input: Pick<Classroom, "name" | "grade">): Promise<Classroom> {
     await delay()
     const store = load()
     const classroom: Classroom = { id: uid(), user_id: "demo", created_at: new Date().toISOString(), ...input }
@@ -234,7 +277,7 @@ export const mockApi = {
     return classroom
   },
 
-  async updateClassroom(id: string, input: Partial<Pick<Classroom, "name" | "grade" | "subject">>): Promise<Classroom> {
+  async updateClassroom(id: string, input: Partial<Pick<Classroom, "name" | "grade">>): Promise<Classroom> {
     await delay()
     const store = load()
     const classroom = store.classrooms.find((c) => c.id === id)

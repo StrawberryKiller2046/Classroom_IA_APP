@@ -4,11 +4,19 @@ import { Plus, School, Users } from "lucide-react"
 import { toast } from "sonner"
 import { createClassroom, listStudents, listClassrooms } from "@/lib/api"
 import type { Classroom } from "@/types/database"
+import { GRADES } from "@/types/database"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import {
   Dialog,
   DialogContent,
@@ -47,7 +55,9 @@ export default function Classrooms() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">Classrooms</h1>
-          <p className="text-muted-foreground">Manage your classrooms, students, and grading.</p>
+          <p className="text-muted-foreground">
+            One roster per grade group — link activities from any subject to it.
+          </p>
         </div>
         <CreateClassroomDialog
           open={open}
@@ -82,10 +92,9 @@ export default function Classrooms() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="grid gap-3">
-                <div className="flex flex-wrap gap-1.5">
-                  <Badge variant="secondary">{classroom.subject}</Badge>
-                  <Badge variant="secondary">{classroom.grade}</Badge>
-                </div>
+                <Badge variant="secondary" className="w-fit">
+                  {classroom.grade}
+                </Badge>
                 <div className="flex items-center gap-1.5 border-t pt-3 font-mono text-sm text-muted-foreground">
                   <Users className="size-3.5" />
                   {studentCounts[classroom.id] ?? 0} students
@@ -110,17 +119,15 @@ function CreateClassroomDialog({
 }) {
   const [name, setName] = useState("")
   const [grade, setGrade] = useState("")
-  const [subject, setSubject] = useState("")
   const [submitting, setSubmitting] = useState(false)
 
   const onSubmit = async () => {
-    if (!name || !grade || !subject) return
+    if (!name || !grade) return
     setSubmitting(true)
     try {
-      await createClassroom({ name, grade, subject })
+      await createClassroom({ name, grade })
       setName("")
       setGrade("")
-      setSubject("")
       onCreated()
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Failed to create classroom")
@@ -144,15 +151,22 @@ function CreateClassroomDialog({
         <div className="grid gap-4">
           <div className="grid gap-1.5">
             <Label>Name</Label>
-            <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. 5A Science" />
+            <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. 5A" />
           </div>
           <div className="grid gap-1.5">
             <Label>Grade</Label>
-            <Input value={grade} onChange={(e) => setGrade(e.target.value)} placeholder="e.g. 5th Grade" />
-          </div>
-          <div className="grid gap-1.5">
-            <Label>Subject</Label>
-            <Input value={subject} onChange={(e) => setSubject(e.target.value)} placeholder="e.g. Science" />
+            <Select value={grade} onValueChange={setGrade}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select a grade" />
+              </SelectTrigger>
+              <SelectContent>
+                {GRADES.map((g) => (
+                  <SelectItem key={g} value={g}>
+                    {g}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         </div>
         <DialogFooter>

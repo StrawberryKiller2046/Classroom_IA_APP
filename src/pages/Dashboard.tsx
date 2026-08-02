@@ -23,6 +23,7 @@ interface ClassroomStats {
   classroom: Classroom
   studentCount: number
   activityCount: number
+  subjects: string[]
   average: number | null
   lastActivityAt: string | null
 }
@@ -30,7 +31,6 @@ interface ClassroomStats {
 export default function Dashboard() {
   const [rows, setRows] = useState<ClassroomStats[]>([])
   const [loading, setLoading] = useState(true)
-  const [subjectFilter, setSubjectFilter] = useState("all")
   const [gradeFilter, setGradeFilter] = useState("all")
   const [sortBy, setSortBy] = useState<"recent" | "average" | "students">("recent")
 
@@ -53,10 +53,12 @@ export default function Dashboard() {
             ? gradingResults.reduce((sum, r) => sum + Number(r.score), 0) / gradingResults.length
             : null
           const lastActivityAt = classroomActivities[0]?.created_at ?? null
+          const subjects = Array.from(new Set(classroomActivities.map((a) => a.subject))).sort()
           return {
             classroom,
             studentCount: students.length,
             activityCount: classroomActivities.length,
+            subjects,
             average,
             lastActivityAt,
           }
@@ -73,17 +75,12 @@ export default function Dashboard() {
     }
   }, [])
 
-  const subjects = useMemo(
-    () => Array.from(new Set(rows.map((r) => r.classroom.subject))).sort(),
-    [rows]
-  )
   const grades = useMemo(
     () => Array.from(new Set(rows.map((r) => r.classroom.grade))).sort(),
     [rows]
   )
 
   const filtered = rows
-    .filter((r) => subjectFilter === "all" || r.classroom.subject === subjectFilter)
     .filter((r) => gradeFilter === "all" || r.classroom.grade === gradeFilter)
     .sort((a, b) => {
       if (sortBy === "average") return (b.average ?? -1) - (a.average ?? -1)
@@ -120,20 +117,6 @@ export default function Dashboard() {
       </StatStrip>
 
       <div className="flex flex-wrap gap-3">
-        <Select value={subjectFilter} onValueChange={setSubjectFilter}>
-          <SelectTrigger className="w-44">
-            <SelectValue placeholder="Subject" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All subjects</SelectItem>
-            {subjects.map((s) => (
-              <SelectItem key={s} value={s}>
-                {s}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-
         <Select value={gradeFilter} onValueChange={setGradeFilter}>
           <SelectTrigger className="w-44">
             <SelectValue placeholder="Grade" />
@@ -170,7 +153,7 @@ export default function Dashboard() {
       )}
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {filtered.map(({ classroom, studentCount, activityCount, average }) => (
+        {filtered.map(({ classroom, studentCount, activityCount, subjects, average }) => (
           <Link key={classroom.id} to={`/classrooms/${classroom.id}`}>
             <Card className="h-full transition-colors hover:border-primary/40 hover:bg-accent/30">
               <CardHeader>
@@ -181,8 +164,12 @@ export default function Dashboard() {
               </CardHeader>
               <CardContent className="grid gap-3">
                 <div className="flex flex-wrap gap-1.5">
-                  <Badge variant="secondary">{classroom.subject}</Badge>
                   <Badge variant="secondary">{classroom.grade}</Badge>
+                  {subjects.map((s) => (
+                    <Badge key={s} variant="outline">
+                      {s}
+                    </Badge>
+                  ))}
                 </div>
                 <div className="flex justify-between border-t pt-3 font-mono text-sm text-muted-foreground">
                   <span>{studentCount} students</span>

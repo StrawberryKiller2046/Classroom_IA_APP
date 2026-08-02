@@ -36,7 +36,6 @@ export interface Classroom {
   user_id: string
   name: string
   grade: string
-  subject: string
   created_at: string
 }
 

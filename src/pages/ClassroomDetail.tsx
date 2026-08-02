@@ -82,9 +82,7 @@ export default function ClassroomDetail() {
           All classrooms
         </Link>
         <h1 className="text-2xl font-semibold tracking-tight">{classroom.name}</h1>
-        <p className="text-muted-foreground">
-          {classroom.subject} · {classroom.grade}
-        </p>
+        <p className="text-muted-foreground">{classroom.grade}</p>
       </div>
 
       <Tabs defaultValue="students">
