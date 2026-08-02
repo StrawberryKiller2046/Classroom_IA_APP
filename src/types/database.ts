@@ -76,12 +76,10 @@ export interface Purchase {
   created_at: string
 }
 
-export const EDUCATION_LEVELS = [
-  "Primary",
-  "Lower Secondary",
-  "Upper Secondary",
-  "Higher Education",
-] as const
+// Matches the Spanish-speaking system's three stages (Primaria / Secundaria /
+// Bachillerato), in English. Grades are currently capped at Primary (see
+// GRADES below), but the field stays editable in case that changes later.
+export const EDUCATION_LEVELS = ["Primary", "Secondary", "Baccalaureate"] as const
 
 export const DIFFICULTIES = ["Easy", "Medium", "Hard", "Mixed"] as const
 
