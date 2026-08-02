@@ -60,6 +60,35 @@ export interface GradingResult {
   graded_at: string
 }
 
+export interface LessonPlanPeriod {
+  id: string
+  time_label: string
+  monday: string
+  tuesday: string
+  wednesday: string
+  thursday: string
+  friday: string
+}
+
+export interface LessonPlan {
+  id: string
+  user_id: string
+  name: string
+  grade: string | null
+  notes: string | null
+  periods: LessonPlanPeriod[]
+  created_at: string
+  updated_at: string
+}
+
+export const WEEKDAYS = [
+  { key: "monday", label: "Monday" },
+  { key: "tuesday", label: "Tuesday" },
+  { key: "wednesday", label: "Wednesday" },
+  { key: "thursday", label: "Thursday" },
+  { key: "friday", label: "Friday" },
+] as const
+
 export interface UsageCounter {
   user_id: string
   month: string

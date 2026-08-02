@@ -7,6 +7,8 @@ import Classrooms from "@/pages/Classrooms"
 import ClassroomDetail from "@/pages/ClassroomDetail"
 import GradingScreen from "@/pages/GradingScreen"
 import Dashboard from "@/pages/Dashboard"
+import Planner from "@/pages/Planner"
+import PlannerEditor from "@/pages/PlannerEditor"
 
 function App() {
   return (
@@ -28,6 +30,8 @@ function App() {
             element={<GradingScreen />}
           />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/planner" element={<Planner />} />
+          <Route path="/planner/:planId" element={<PlannerEditor />} />
         </Route>
       </Routes>
     </HashRouter>

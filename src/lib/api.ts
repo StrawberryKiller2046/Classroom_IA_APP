@@ -1,6 +1,6 @@
 import { isSupabaseConfigured, supabase } from "@/lib/supabase"
 import { mockApi } from "@/lib/mock-store"
-import type { Activity, Classroom, GradingResult, Student } from "@/types/database"
+import type { Activity, Classroom, GradingResult, LessonPlan, Student } from "@/types/database"
 
 export interface GenerateActivityInput {
   country: string
@@ -174,6 +174,59 @@ export async function listGradingResultsForClassroom(classroomId: string): Promi
     .eq("students.classroom_id", classroomId)
   if (error) throw error
   return data as GradingResult[]
+}
+
+export async function listLessonPlans(): Promise<LessonPlan[]> {
+  if (!isSupabaseConfigured) return mockApi.listLessonPlans()
+  const { data, error } = await supabase
+    .from("lesson_plans")
+    .select("*")
+    .order("updated_at", { ascending: false })
+  if (error) throw error
+  return data as LessonPlan[]
+}
+
+export async function getLessonPlan(id: string): Promise<LessonPlan> {
+  if (!isSupabaseConfigured) return mockApi.getLessonPlan(id)
+  const { data, error } = await supabase.from("lesson_plans").select("*").eq("id", id).single()
+  if (error) throw error
+  return data as LessonPlan
+}
+
+export async function createLessonPlan(
+  input: Pick<LessonPlan, "name" | "grade" | "notes" | "periods">
+): Promise<LessonPlan> {
+  if (!isSupabaseConfigured) return mockApi.createLessonPlan(input)
+  const { data: userData } = await supabase.auth.getUser()
+  if (!userData.user) throw new Error("Not authenticated")
+  const { data, error } = await supabase
+    .from("lesson_plans")
+    .insert({ ...input, user_id: userData.user.id })
+    .select()
+    .single()
+  if (error) throw error
+  return data as LessonPlan
+}
+
+export async function updateLessonPlan(
+  id: string,
+  input: Partial<Pick<LessonPlan, "name" | "grade" | "notes" | "periods">>
+): Promise<LessonPlan> {
+  if (!isSupabaseConfigured) return mockApi.updateLessonPlan(id, input)
+  const { data, error } = await supabase
+    .from("lesson_plans")
+    .update({ ...input, updated_at: new Date().toISOString() })
+    .eq("id", id)
+    .select()
+    .single()
+  if (error) throw error
+  return data as LessonPlan
+}
+
+export async function deleteLessonPlan(id: string): Promise<void> {
+  if (!isSupabaseConfigured) return mockApi.deleteLessonPlan(id)
+  const { error } = await supabase.from("lesson_plans").delete().eq("id", id)
+  if (error) throw error
 }
 
 export async function getUsage(): Promise<{ generations_used: number; month: string }> {

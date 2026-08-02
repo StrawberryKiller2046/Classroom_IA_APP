@@ -8,17 +8,19 @@ import type {
   Classroom,
   Exercise,
   GradingResult,
+  LessonPlan,
   Student,
 } from "@/types/database"
 import type { GenerateActivityInput } from "@/lib/api"
 
-const STORAGE_KEY = "classroom-ai-demo-v2"
+const STORAGE_KEY = "classroom-ai-demo-v3"
 
 interface Store {
   classrooms: Classroom[]
   students: Student[]
   activities: Activity[]
   gradingResults: GradingResult[]
+  lessonPlans: LessonPlan[]
 }
 
 function seed(): Store {
@@ -151,6 +153,37 @@ function seed(): Store {
         answers: { m1: "1/2", m2: "True", m3: "44" },
         score: 33,
         graded_at: now,
+      },
+    ],
+    lessonPlans: [
+      {
+        id: "demo-plan-1",
+        user_id: "demo",
+        name: "5th Grade - Week 1",
+        grade: "5th Grade",
+        notes: null,
+        periods: [
+          {
+            id: "period-1",
+            time_label: "8:00 - 8:45",
+            monday: "Mathematics",
+            tuesday: "Science",
+            wednesday: "Mathematics",
+            thursday: "Science",
+            friday: "Art",
+          },
+          {
+            id: "period-2",
+            time_label: "8:45 - 9:30",
+            monday: "English / Language Arts",
+            tuesday: "History",
+            wednesday: "English / Language Arts",
+            thursday: "Geography",
+            friday: "Music",
+          },
+        ],
+        created_at: now,
+        updated_at: now,
       },
     ],
   }
@@ -369,6 +402,50 @@ export const mockApi = {
     const store = load()
     const studentIds = new Set(store.students.filter((s) => s.classroom_id === classroomId).map((s) => s.id))
     return store.gradingResults.filter((r) => studentIds.has(r.student_id))
+  },
+
+  async listLessonPlans(): Promise<LessonPlan[]> {
+    await delay()
+    return load().lessonPlans.slice().sort((a, b) => b.updated_at.localeCompare(a.updated_at))
+  },
+
+  async getLessonPlan(id: string): Promise<LessonPlan> {
+    await delay()
+    const plan = load().lessonPlans.find((p) => p.id === id)
+    if (!plan) throw new Error("Lesson plan not found")
+    return plan
+  },
+
+  async createLessonPlan(
+    input: Pick<LessonPlan, "name" | "grade" | "notes" | "periods">
+  ): Promise<LessonPlan> {
+    await delay()
+    const store = load()
+    const now = new Date().toISOString()
+    const plan: LessonPlan = { id: uid(), user_id: "demo", created_at: now, updated_at: now, ...input }
+    store.lessonPlans.unshift(plan)
+    save(store)
+    return plan
+  },
+
+  async updateLessonPlan(
+    id: string,
+    input: Partial<Pick<LessonPlan, "name" | "grade" | "notes" | "periods">>
+  ): Promise<LessonPlan> {
+    await delay()
+    const store = load()
+    const plan = store.lessonPlans.find((p) => p.id === id)
+    if (!plan) throw new Error("Lesson plan not found")
+    Object.assign(plan, input, { updated_at: new Date().toISOString() })
+    save(store)
+    return plan
+  },
+
+  async deleteLessonPlan(id: string): Promise<void> {
+    await delay()
+    const store = load()
+    store.lessonPlans = store.lessonPlans.filter((p) => p.id !== id)
+    save(store)
   },
 
   async getUsage(): Promise<{ generations_used: number; month: string }> {
