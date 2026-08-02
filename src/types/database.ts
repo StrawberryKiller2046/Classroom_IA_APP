@@ -24,7 +24,6 @@ export interface Activity {
   exercise_type: string
   difficulty: string
   num_exercises: number
-  include_answer_sheet: boolean
   exercises: Exercise[]
   answer_key: AnswerKey | null
   pdf_url: string | null

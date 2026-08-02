@@ -60,7 +60,7 @@ export default function AppShell() {
         )}
 
         <main className="flex-1 p-4 md:p-8">
-          <div className="mx-auto w-full max-w-5xl">
+          <div className="mx-auto w-full max-w-6xl">
             <Outlet />
           </div>
         </main>

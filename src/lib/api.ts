@@ -12,7 +12,6 @@ export interface GenerateActivityInput {
   difficulty: string
   num_exercises: number
   exam_name: string
-  include_answer_sheet: boolean
   classroom_id?: string | null
   // When true, the AI-suggested title (based on the actual exam content)
   // replaces exam_name instead of the client's placeholder.

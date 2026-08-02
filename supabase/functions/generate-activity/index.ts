@@ -26,7 +26,6 @@ interface GenerateRequest {
   difficulty: string
   num_exercises: number
   exam_name: string
-  include_answer_sheet: boolean
   classroom_id?: string | null
   // When true, Gemini's own suggested title (based on the actual exam
   // content) is saved instead of the client's placeholder exam_name.
@@ -107,7 +106,6 @@ Deno.serve(async (req) => {
         exercise_type: body.exercise_type,
         difficulty: body.difficulty,
         num_exercises: body.num_exercises,
-        include_answer_sheet: body.include_answer_sheet,
         exercises,
         // Always persisted so the Auto-Corrector can read it directly from the DB,
         // regardless of whether the teacher also wants it printed on the PDF.

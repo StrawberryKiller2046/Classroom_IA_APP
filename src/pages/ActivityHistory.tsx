@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react"
-import { ChevronDown, Download, History as HistoryIcon } from "lucide-react"
+import { ChevronDown, FileCheck2, FileText, History as HistoryIcon } from "lucide-react"
 import { listActivities, listClassrooms } from "@/lib/api"
 import type { Activity, Classroom } from "@/types/database"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
-import { exportActivityToPdf } from "@/lib/pdf"
+import { exportActivityPdf, exportAnswerKeyPdf } from "@/lib/pdf"
 import ExerciseList from "@/components/activities/ExerciseList"
 
 export default function ActivityHistory() {
@@ -86,13 +86,24 @@ export default function ActivityHistory() {
                   <Button
                     variant="ghost"
                     size="icon"
-                    aria-label="Export PDF"
+                    aria-label="Download activity PDF"
                     onClick={(e) => {
                       e.stopPropagation()
-                      exportActivityToPdf(activity, { includeAnswerKey: activity.include_answer_sheet })
+                      exportActivityPdf(activity)
                     }}
                   >
-                    <Download className="size-4" />
+                    <FileText className="size-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    aria-label="Download answer key PDF"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      exportAnswerKeyPdf(activity)
+                    }}
+                  >
+                    <FileCheck2 className="size-4" />
                   </Button>
                   <ChevronDown className={cn("size-4 text-muted-foreground transition-transform", expanded && "rotate-180")} />
                 </div>
