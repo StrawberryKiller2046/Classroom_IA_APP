@@ -318,7 +318,7 @@ export default function ActivityGenerator() {
       </div>
 
       <div className="lg:sticky lg:top-8">
-        <ActivityPreview activity={result} loading={submitting} />
+        <ActivityPreview activity={result} loading={submitting} onActivityChange={setResult} />
       </div>
     </div>
   )

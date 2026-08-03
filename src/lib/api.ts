@@ -112,6 +112,16 @@ export async function deleteStudent(id: string) {
   if (error) throw error
 }
 
+export async function updateActivity(
+  id: string,
+  input: Partial<Pick<Activity, "exam_name" | "exercises" | "answer_key" | "num_exercises">>
+): Promise<Activity> {
+  if (!isSupabaseConfigured) return mockApi.updateActivity(id, input)
+  const { data, error } = await supabase.from("activities").update(input).eq("id", id).select().single()
+  if (error) throw error
+  return data as Activity
+}
+
 export async function listActivitiesForClassroom(classroomId: string): Promise<Activity[]> {
   if (!isSupabaseConfigured) return mockApi.listActivitiesForClassroom(classroomId)
   const { data, error } = await supabase

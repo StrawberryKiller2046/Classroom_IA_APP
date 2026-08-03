@@ -296,6 +296,19 @@ export const mockApi = {
     return activity
   },
 
+  async updateActivity(
+    id: string,
+    input: Partial<Pick<Activity, "exam_name" | "exercises" | "answer_key" | "num_exercises">>
+  ): Promise<Activity> {
+    await delay()
+    const store = load()
+    const activity = store.activities.find((a) => a.id === id)
+    if (!activity) throw new Error("Activity not found")
+    Object.assign(activity, input)
+    save(store)
+    return activity
+  },
+
   async listClassrooms(): Promise<Classroom[]> {
     await delay()
     return load().classrooms.slice().sort((a, b) => b.created_at.localeCompare(a.created_at))
