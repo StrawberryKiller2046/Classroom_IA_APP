@@ -155,8 +155,8 @@ export default function PlannerEditor() {
         </CardContent>
       </Card>
 
-      <Card>
-        <CardContent className="py-6">
+      <Card className="min-w-0">
+        <CardContent className="min-w-0 py-6">
           <div className="overflow-x-auto">
             <table className="w-full min-w-[720px] border-separate border-spacing-0">
               <thead>
