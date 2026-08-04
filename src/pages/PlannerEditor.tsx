@@ -157,7 +157,8 @@ export default function PlannerEditor() {
 
       <Card className="min-w-0">
         <CardContent className="min-w-0 py-6">
-          <div className="overflow-x-auto">
+          {/* Desktop/tablet: a real table, one row per period. */}
+          <div className="hidden overflow-x-auto md:block">
             <table className="w-full min-w-[720px] border-separate border-spacing-0">
               <thead>
                 <tr>
@@ -209,6 +210,46 @@ export default function PlannerEditor() {
                 ))}
               </tbody>
             </table>
+          </div>
+
+          {/* Mobile: each period stacks its 5 weekdays vertically, so every
+             day is visible at once instead of requiring a sideways scroll. */}
+          <div className="divide-y md:hidden">
+            {periods.map((period) => (
+              <div key={period.id} className="grid gap-3 py-4 first:pt-0 last:pb-0">
+                <div className="flex items-center gap-2">
+                  <Input
+                    value={period.time_label}
+                    onChange={(e) => updatePeriod(period.id, "time_label", e.target.value)}
+                    placeholder="8:00 - 8:45"
+                    className="flex-1"
+                  />
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    aria-label="Remove period"
+                    onClick={() => removePeriod(period.id)}
+                    disabled={periods.length <= 1}
+                  >
+                    <Trash2 className="size-4 text-muted-foreground" />
+                  </Button>
+                </div>
+                <div className="grid gap-2">
+                  {WEEKDAYS.map((day) => (
+                    <div key={day.key} className="grid grid-cols-[3rem_1fr] items-center gap-2">
+                      <span className="text-xs font-medium text-muted-foreground">
+                        {day.label.slice(0, 3)}
+                      </span>
+                      <Input
+                        value={period[day.key]}
+                        onChange={(e) => updatePeriod(period.id, day.key, e.target.value)}
+                        placeholder="Subject"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
           </div>
 
           <Button variant="outline" size="sm" className="mt-4" onClick={addPeriod}>
