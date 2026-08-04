@@ -22,7 +22,7 @@ const NAV_ITEMS = [
 export default function AppShell() {
   return (
     <div className="flex min-h-svh flex-col bg-muted/30 md:flex-row">
-      <aside className="hidden shrink-0 border-r bg-background md:flex md:w-60 md:flex-col">
+      <aside className="hidden shrink-0 bg-background shadow-[2px_0_12px_-2px_rgb(0_0_0_/_0.08)] md:flex md:w-60 md:flex-col">
         <div className="flex items-center gap-2.5 border-b px-5 py-4">
           <div className="flex size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
             <GraduationCap className="size-4.5" strokeWidth={2} />
@@ -37,10 +37,10 @@ export default function AppShell() {
               end={item.end}
               className={({ isActive }) =>
                 cn(
-                  "relative flex items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium transition-colors duration-150",
+                  "flex items-center gap-2.5 rounded-md px-3 py-2 text-sm transition-colors duration-150",
                   isActive
-                    ? "bg-primary/8 text-primary before:absolute before:inset-y-1.5 before:left-0 before:w-0.5 before:rounded-full before:bg-primary"
-                    : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                    ? "bg-primary/12 font-semibold text-primary"
+                    : "font-medium text-muted-foreground hover:bg-muted hover:text-foreground"
                 )
               }
             >

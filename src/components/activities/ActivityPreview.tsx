@@ -155,7 +155,9 @@ export default function ActivityPreview({
                 <span className="mt-4 block h-px bg-border" />
               </span>
             </div>
-            <h2 className="text-xl font-semibold tracking-tight">{activity.exam_name}</h2>
+            <h2 className="text-[1.75rem] leading-tight font-bold tracking-tight text-balance">
+              {activity.exam_name}
+            </h2>
           </div>
           <ExerciseList activity={activity} showAnswers={showAnswers} />
         </Card>
@@ -177,7 +179,7 @@ function WorksheetGhost({ icon, text, pulse }: { icon: React.ReactNode; text: st
           <div className="h-2 w-12 rounded-full bg-muted" />
           <div className="h-2 w-8 rounded-full bg-muted" />
         </div>
-        <div className="mb-8 h-5 w-2/3 rounded-full bg-muted" />
+        <div className="mb-8 h-7 w-2/3 rounded-full bg-muted" />
         <div className="grid gap-6">
           {[100, 70, 85, 55].map((width, i) => (
             <div key={i} className="grid gap-2">

@@ -81,6 +81,11 @@ export interface LessonPlan {
   updated_at: string
 }
 
+// Mirrors MONTHLY_GENERATION_LIMIT in supabase/functions/generate-activity —
+// the server is the real source of truth; this is only for the client-side
+// usage indicator so the display can't drift from what actually gets enforced.
+export const GENERATION_LIMIT = 30
+
 export const WEEKDAYS = [
   { key: "monday", label: "Monday" },
   { key: "tuesday", label: "Tuesday" },

@@ -5,12 +5,14 @@ import { z } from "zod"
 import { Loader2, Sparkles } from "lucide-react"
 import { toast } from "sonner"
 import { generateActivity, getUsage, listClassrooms } from "@/lib/api"
+import { cn } from "@/lib/utils"
 import type { Activity, Classroom } from "@/types/database"
 import {
   COUNTRIES,
   DIFFICULTIES,
   EDUCATION_LEVELS,
   EXERCISE_TYPES,
+  GENERATION_LIMIT,
   GRADES,
   SUBJECTS,
   inferEducationLevel,
@@ -19,6 +21,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Slider } from "@/components/ui/slider"
+import { Progress } from "@/components/ui/progress"
 import {
   Select,
   SelectContent,
@@ -131,14 +134,10 @@ export default function ActivityGenerator() {
               Describe the exam you need and let AI draft it in seconds.
             </p>
           </div>
-          {usage && (
-            <span className="rounded-full border bg-muted/40 px-3 py-1 font-mono text-xs text-muted-foreground">
-              {usage.generations_used} generations this month
-            </span>
-          )}
+          {usage && <GenerationQuota used={usage.generations_used} />}
         </div>
 
-        <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-8">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-6">
           <FormSection title="Curriculum">
             <Field label="Country / curriculum region" error={form.formState.errors.country?.message}>
               <Select
@@ -221,7 +220,7 @@ export default function ActivityGenerator() {
               </Select>
             </Field>
 
-            <Field label="Specific topic (optional)">
+            <Field label="Specific topic (optional)" optional>
               <Input placeholder="e.g. Fractions, Photosynthesis" {...form.register("topic")} />
             </Field>
 
@@ -279,7 +278,7 @@ export default function ActivityGenerator() {
               />
             </Field>
 
-            <Field label="Link to classroom (optional)">
+            <Field label="Link to classroom (optional)" optional>
               <Select
                 value={form.watch("classroom_id")}
                 onValueChange={(v) => form.setValue("classroom_id", v)}
@@ -324,12 +323,37 @@ export default function ActivityGenerator() {
   )
 }
 
+function GenerationQuota({ used }: { used: number }) {
+  const remaining = Math.max(GENERATION_LIMIT - used, 0)
+  const percentUsed = Math.min((used / GENERATION_LIMIT) * 100, 100)
+  const low = remaining <= 3
+
+  return (
+    <div className="w-full max-w-56 shrink-0">
+      <div className="flex items-baseline justify-between gap-2">
+        <span className={cn("text-xs font-medium", low ? "text-warning-foreground" : "text-foreground")}>
+          <span className="font-mono tabular-nums">{remaining}</span> of{" "}
+          <span className="font-mono tabular-nums">{GENERATION_LIMIT}</span> left
+        </span>
+        <span className="text-xs text-muted-foreground">this month</span>
+      </div>
+      <Progress
+        value={percentUsed}
+        className={cn(
+          "mt-1.5 h-1.5",
+          low && "bg-warning/20 [&>[data-slot=progress-indicator]]:bg-warning"
+        )}
+      />
+    </div>
+  )
+}
+
 function FormSection({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="grid gap-4">
-      <h2 className="text-xs font-medium tracking-wide text-muted-foreground uppercase">{title}</h2>
+    <section className="grid gap-4 rounded-xl bg-card p-5 shadow-md">
+      <h2 className="text-sm font-semibold tracking-tight">{title}</h2>
       <div className="grid gap-4">{children}</div>
-    </div>
+    </section>
   )
 }
 
@@ -337,18 +361,20 @@ function Field({
   label,
   error,
   hint,
+  optional,
   className,
   children,
 }: {
   label: string
   error?: string
   hint?: string
+  optional?: boolean
   className?: string
   children: React.ReactNode
 }) {
   return (
     <div className={`grid gap-1.5 ${className ?? ""}`}>
-      <Label>{label}</Label>
+      <Label className={optional ? "font-normal text-muted-foreground" : undefined}>{label}</Label>
       {children}
       {error && <p className="text-xs text-destructive">{error}</p>}
       {!error && hint && <p className="text-xs text-muted-foreground">{hint}</p>}
