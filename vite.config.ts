@@ -20,8 +20,9 @@ export default defineConfig({
         short_name: 'Classroom AI',
         description:
           'Genera exámenes y actividades alineados al currículo en segundos, y califícalos en clase.',
-        theme_color: '#4338ca',
+        theme_color: '#7935c6',
         background_color: '#ffffff',
+        lang: 'es',
         display: 'standalone',
         // Relative paths so this resolves correctly whether the app is served
         // from a domain root or a subpath (e.g. a GitHub Pages project site).

@@ -2,7 +2,6 @@ import { NavLink, Outlet } from "react-router-dom"
 import {
   CalendarDays,
   FlaskConical,
-  GraduationCap,
   History,
   LayoutDashboard,
   School,
@@ -10,6 +9,7 @@ import {
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { isSupabaseConfigured } from "@/lib/supabase"
+import Logo from "@/components/layout/Logo"
 
 const NAV_ITEMS = [
   { to: "/", label: "Generador", icon: Sparkles, end: true },
@@ -24,9 +24,7 @@ export default function AppShell() {
     <div className="flex min-h-svh flex-col bg-muted/30 md:flex-row">
       <aside className="hidden shrink-0 bg-background shadow-[2px_0_12px_-2px_rgb(0_0_0_/_0.08)] md:flex md:w-60 md:flex-col">
         <div className="flex items-center gap-2.5 border-b px-5 py-4">
-          <div className="flex size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-            <GraduationCap className="size-4.5" strokeWidth={2} />
-          </div>
+          <Logo className="size-8" />
           <span className="font-semibold tracking-tight">Classroom AI</span>
         </div>
         <nav className="flex flex-1 flex-col gap-0.5 p-3">
@@ -54,9 +52,7 @@ export default function AppShell() {
       <div className="flex flex-1 flex-col pb-16 md:pb-0">
         <header className="flex items-center justify-between border-b bg-background px-4 py-3 md:hidden">
           <div className="flex items-center gap-2">
-            <div className="flex size-7 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-              <GraduationCap className="size-4" strokeWidth={2} />
-            </div>
+            <Logo className="size-7" />
             <span className="font-semibold tracking-tight">Classroom AI</span>
           </div>
         </header>
