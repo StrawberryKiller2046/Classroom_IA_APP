@@ -23,7 +23,7 @@ export async function generateActivity(input: GenerateActivityInput): Promise<Ac
 
   const { data: sessionData } = await supabase.auth.getSession()
   const token = sessionData.session?.access_token
-  if (!token) throw new Error("Not authenticated")
+  if (!token) throw new Error("No autenticado")
 
   const { data, error } = await supabase.functions.invoke("generate-activity", {
     body: input,
@@ -65,7 +65,7 @@ export async function listClassrooms(): Promise<Classroom[]> {
 export async function createClassroom(input: Pick<Classroom, "name" | "grade">) {
   if (!isSupabaseConfigured) return mockApi.createClassroom(input)
   const { data: userData } = await supabase.auth.getUser()
-  if (!userData.user) throw new Error("Not authenticated")
+  if (!userData.user) throw new Error("No autenticado")
   const { data, error } = await supabase
     .from("classrooms")
     .insert({ ...input, user_id: userData.user.id })
@@ -208,7 +208,7 @@ export async function createLessonPlan(
 ): Promise<LessonPlan> {
   if (!isSupabaseConfigured) return mockApi.createLessonPlan(input)
   const { data: userData } = await supabase.auth.getUser()
-  if (!userData.user) throw new Error("Not authenticated")
+  if (!userData.user) throw new Error("No autenticado")
   const { data, error } = await supabase
     .from("lesson_plans")
     .insert({ ...input, user_id: userData.user.id })
@@ -242,7 +242,7 @@ export async function deleteLessonPlan(id: string): Promise<void> {
 export async function getUsage(): Promise<{ generations_used: number; month: string }> {
   if (!isSupabaseConfigured) return mockApi.getUsage()
   const { data: userData } = await supabase.auth.getUser()
-  if (!userData.user) throw new Error("Not authenticated")
+  if (!userData.user) throw new Error("No autenticado")
   const month = new Date().toISOString().slice(0, 7)
   const { data, error } = await supabase
     .from("usage_counters")

@@ -19,7 +19,7 @@ export default defineConfig({
         name: 'Classroom Activity Generator',
         short_name: 'Classroom AI',
         description:
-          'Generate curriculum-aligned exams and quizzes in seconds, then grade them in class.',
+          'Genera exámenes y actividades alineados al currículo en segundos, y califícalos en clase.',
         theme_color: '#4338ca',
         background_color: '#ffffff',
         display: 'standalone',

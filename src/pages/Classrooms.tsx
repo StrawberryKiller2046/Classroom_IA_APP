@@ -52,15 +52,15 @@ export default function Classrooms() {
 
   const onDelete = async (classroom: Classroom) => {
     const ok = window.confirm(
-      `Delete "${classroom.name}"? This also removes its students and grading history. This can't be undone.`
+      `¿Eliminar "${classroom.name}"? Esto también borra sus estudiantes e historial de calificaciones. No se puede deshacer.`
     )
     if (!ok) return
     try {
       await deleteClassroom(classroom.id)
-      toast.success("Classroom deleted")
+      toast.success("Salón eliminado")
       refresh()
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Failed to delete classroom")
+      toast.error(err instanceof Error ? err.message : "No se pudo eliminar el salón")
     }
   }
 
@@ -68,9 +68,9 @@ export default function Classrooms() {
     <div className="grid gap-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Classrooms</h1>
+          <h1 className="text-2xl font-semibold tracking-tight">Salones</h1>
           <p className="text-muted-foreground">
-            One roster per grade group — link activities from any subject to it.
+            Una lista por grupo de grado — vincula actividades de cualquier materia.
           </p>
         </div>
         <CreateClassroomDialog
@@ -88,8 +88,8 @@ export default function Classrooms() {
           <CardContent className="flex flex-col items-center gap-3 py-12 text-center">
             <School className="size-8 text-muted-foreground" />
             <div>
-              <p className="font-medium">No classrooms yet</p>
-              <p className="text-sm text-muted-foreground">Create one to start tracking students and grades.</p>
+              <p className="font-medium">Aún no hay salones</p>
+              <p className="text-sm text-muted-foreground">Crea uno para empezar a llevar el control de estudiantes y calificaciones.</p>
             </div>
           </CardContent>
         </Card>
@@ -114,14 +114,14 @@ export default function Classrooms() {
                 </Badge>
                 <div className="flex items-center gap-1.5 border-t pt-3 font-mono text-sm text-muted-foreground">
                   <Users className="size-3.5" />
-                  {studentCounts[classroom.id] ?? 0} students
+                  {studentCounts[classroom.id] ?? 0} estudiantes
                 </div>
               </CardContent>
             </Link>
             <Button
               variant="ghost"
               size="icon"
-              aria-label="Delete classroom"
+              aria-label="Eliminar salón"
               className="absolute right-2 top-2"
               onClick={() => onDelete(classroom)}
             >
@@ -156,7 +156,7 @@ function CreateClassroomDialog({
       setGrade("")
       onCreated()
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Failed to create classroom")
+      toast.error(err instanceof Error ? err.message : "No se pudo crear el salón")
     } finally {
       setSubmitting(false)
     }
@@ -167,23 +167,23 @@ function CreateClassroomDialog({
       <DialogTrigger asChild>
         <Button>
           <Plus />
-          New classroom
+          Nuevo salón
         </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>New classroom</DialogTitle>
+          <DialogTitle>Nuevo salón</DialogTitle>
         </DialogHeader>
         <div className="grid gap-4">
           <div className="grid gap-1.5">
-            <Label>Name</Label>
-            <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. 5A" />
+            <Label>Nombre</Label>
+            <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="ej. 5A" />
           </div>
           <div className="grid gap-1.5">
-            <Label>Grade</Label>
+            <Label>Grado</Label>
             <Select value={grade} onValueChange={setGrade}>
               <SelectTrigger className="w-full">
-                <SelectValue placeholder="Select a grade" />
+                <SelectValue placeholder="Selecciona un grado" />
               </SelectTrigger>
               <SelectContent>
                 {GRADES.map((g) => (
@@ -197,7 +197,7 @@ function CreateClassroomDialog({
         </div>
         <DialogFooter>
           <Button onClick={onSubmit} disabled={submitting}>
-            Create
+            Crear
           </Button>
         </DialogFooter>
       </DialogContent>

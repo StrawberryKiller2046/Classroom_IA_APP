@@ -13,7 +13,7 @@ import type {
 } from "@/types/database"
 import type { GenerateActivityInput } from "@/lib/api"
 
-const STORAGE_KEY = "classroom-ai-demo-v3"
+const STORAGE_KEY = "classroom-ai-demo-v4"
 
 interface Store {
   classrooms: Classroom[]
@@ -33,42 +33,42 @@ function seed(): Store {
     {
       id: "q1",
       type: "mc",
-      question: "What is the powerhouse of the cell?",
-      options: ["Nucleus", "Mitochondria", "Ribosome", "Golgi apparatus"],
-      correct_answer: "Mitochondria",
+      question: "¿Cuál es la central energética de la célula?",
+      options: ["Núcleo", "Mitocondria", "Ribosoma", "Aparato de Golgi"],
+      correct_answer: "Mitocondria",
     },
     {
       id: "q2",
       type: "tf",
-      question: "Plants release oxygen during photosynthesis.",
+      question: "Las plantas liberan oxígeno durante la fotosíntesis.",
       correct_answer: "True",
     },
     {
       id: "q3",
       type: "short",
-      question: "What gas do humans exhale that plants use for photosynthesis?",
-      correct_answer: "Carbon dioxide",
+      question: "¿Qué gas exhalan los humanos y usan las plantas para la fotosíntesis?",
+      correct_answer: "Dióxido de carbono",
     },
     {
       id: "q4",
       type: "mc",
-      question: "Which planet is known as the Red Planet?",
-      options: ["Venus", "Mars", "Jupiter", "Saturn"],
-      correct_answer: "Mars",
+      question: "¿Qué planeta es conocido como el Planeta Rojo?",
+      options: ["Venus", "Marte", "Júpiter", "Saturno"],
+      correct_answer: "Marte",
     },
     {
       id: "q5",
       type: "short",
-      question: "How many legs does an insect have?",
+      question: "¿Cuántas patas tiene un insecto?",
       correct_answer: "6",
     },
   ]
   const answer_key: AnswerKey = Object.fromEntries(exercises.map((e) => [e.id, e.correct_answer]))
 
   const mathExercises: Exercise[] = [
-    { id: "m1", type: "short", question: "What is 3/4 + 1/4?", correct_answer: "1" },
-    { id: "m2", type: "tf", question: "A square has four equal sides.", correct_answer: "True" },
-    { id: "m3", type: "mc", question: "What is 12 x 4?", options: ["36", "48", "44", "52"], correct_answer: "48" },
+    { id: "m1", type: "short", question: "¿Cuánto es 3/4 + 1/4?", correct_answer: "1" },
+    { id: "m2", type: "tf", question: "Un cuadrado tiene cuatro lados iguales.", correct_answer: "True" },
+    { id: "m3", type: "mc", question: "¿Cuánto es 12 x 4?", options: ["36", "48", "44", "52"], correct_answer: "48" },
   ]
   const mathActivityId = "demo-activity-2"
 
@@ -76,25 +76,25 @@ function seed(): Store {
     // A classroom is just a grade-level group now — no subject attached, so
     // one roster can have activities from several subjects (demoed below).
     classrooms: [
-      { id: classroomId, user_id: "demo", name: "5A", grade: "5th Grade", created_at: now },
+      { id: classroomId, user_id: "demo", name: "5A", grade: "5to Grado", created_at: now },
     ],
     students: [
-      { id: studentIds[0], classroom_id: classroomId, name: "Ava Martinez", notes: null, created_at: now },
+      { id: studentIds[0], classroom_id: classroomId, name: "Ava Martínez", notes: null, created_at: now },
       { id: studentIds[1], classroom_id: classroomId, name: "Liam Chen", notes: null, created_at: now },
-      { id: studentIds[2], classroom_id: classroomId, name: "Noor Ahmed", notes: "Needs extra time", created_at: now },
+      { id: studentIds[2], classroom_id: classroomId, name: "Noor Ahmed", notes: "Necesita tiempo extra", created_at: now },
     ],
     activities: [
       {
         id: activityId,
         user_id: "demo",
-        exam_name: "Science - 5th Grade - Sample Quiz",
-        subject: "Science",
-        country: "United States",
-        education_level: "Primary",
-        grade: "5th Grade",
-        topic: "Cells & the Solar System",
+        exam_name: "Ciencias - 5to Grado - Examen de Muestra",
+        subject: "Ciencias",
+        country: "Estados Unidos",
+        education_level: "Primaria",
+        grade: "5to Grado",
+        topic: "Células y el Sistema Solar",
         exercise_type: "mixed",
-        difficulty: "Medium",
+        difficulty: "Medio",
         num_exercises: exercises.length,
         exercises,
         answer_key,
@@ -105,14 +105,14 @@ function seed(): Store {
       {
         id: mathActivityId,
         user_id: "demo",
-        exam_name: "Mathematics - 5th Grade - Sample Quiz",
-        subject: "Mathematics",
-        country: "United States",
-        education_level: "Primary",
-        grade: "5th Grade",
-        topic: "Fractions & Multiplication",
+        exam_name: "Matemáticas - 5to Grado - Examen de Muestra",
+        subject: "Matemáticas",
+        country: "Estados Unidos",
+        education_level: "Primaria",
+        grade: "5to Grado",
+        topic: "Fracciones y Multiplicación",
         exercise_type: "mixed",
-        difficulty: "Medium",
+        difficulty: "Medio",
         num_exercises: mathExercises.length,
         exercises: mathExercises,
         answer_key: Object.fromEntries(mathExercises.map((e) => [e.id, e.correct_answer])),
@@ -126,7 +126,7 @@ function seed(): Store {
         id: "demo-result-1",
         student_id: studentIds[0],
         activity_id: activityId,
-        answers: { q1: "Mitochondria", q2: "True", q3: "Carbon dioxide", q4: "Mars", q5: "6" },
+        answers: { q1: "Mitocondria", q2: "True", q3: "Dióxido de carbono", q4: "Marte", q5: "6" },
         score: 100,
         graded_at: now,
       },
@@ -134,7 +134,7 @@ function seed(): Store {
         id: "demo-result-2",
         student_id: studentIds[1],
         activity_id: activityId,
-        answers: { q1: "Nucleus", q2: "True", q3: "Carbon dioxide", q4: "Mars", q5: "8" },
+        answers: { q1: "Núcleo", q2: "True", q3: "Dióxido de carbono", q4: "Marte", q5: "8" },
         score: 60,
         graded_at: now,
       },
@@ -159,27 +159,27 @@ function seed(): Store {
       {
         id: "demo-plan-1",
         user_id: "demo",
-        name: "5th Grade - Week 1",
-        grade: "5th Grade",
+        name: "5to Grado - Semana 1",
+        grade: "5to Grado",
         notes: null,
         periods: [
           {
             id: "period-1",
             time_label: "8:00 - 8:45",
-            monday: "Mathematics",
-            tuesday: "Science",
-            wednesday: "Mathematics",
-            thursday: "Science",
-            friday: "Art",
+            monday: "Matemáticas",
+            tuesday: "Ciencias",
+            wednesday: "Matemáticas",
+            thursday: "Ciencias",
+            friday: "Arte",
           },
           {
             id: "period-2",
             time_label: "8:45 - 9:30",
-            monday: "English / Language Arts",
-            tuesday: "History",
-            wednesday: "English / Language Arts",
-            thursday: "Geography",
-            friday: "Music",
+            monday: "Inglés / Lengua",
+            tuesday: "Historia",
+            wednesday: "Inglés / Lengua",
+            thursday: "Geografía",
+            friday: "Música",
           },
         ],
         created_at: now,
@@ -235,30 +235,30 @@ export const mockApi = {
         return {
           id: `q${i + 1}`,
           type,
-          question: `[Demo] Sample ${input.difficulty.toLowerCase()} question about ${topic} (#${i + 1})`,
-          options: ["Option A (correct)", "Option B", "Option C", "Option D"],
-          correct_answer: "Option A (correct)",
+          question: `[Demo] Pregunta de muestra (${input.difficulty.toLowerCase()}) sobre ${topic} (#${i + 1})`,
+          options: ["Opción A (correcta)", "Opción B", "Opción C", "Opción D"],
+          correct_answer: "Opción A (correcta)",
         }
       }
       if (type === "tf") {
         return {
           id: `q${i + 1}`,
           type,
-          question: `[Demo] True or false: this is a sample statement about ${topic} (#${i + 1}).`,
+          question: `[Demo] Verdadero o falso: esta es una afirmación de muestra sobre ${topic} (#${i + 1}).`,
           correct_answer: "True",
         }
       }
       return {
         id: `q${i + 1}`,
         type,
-        question: `[Demo] Short-answer sample question about ${topic} (#${i + 1})`,
-        correct_answer: "Sample answer",
+        question: `[Demo] Pregunta de respuesta corta de muestra sobre ${topic} (#${i + 1})`,
+        correct_answer: "Respuesta de muestra",
       }
     })
 
     const suggestedTitle = input.topic
-      ? `[Demo] ${input.topic} in ${input.subject}`
-      : `[Demo] ${input.subject} Practice Exam`
+      ? `[Demo] ${input.topic} en ${input.subject}`
+      : `[Demo] Examen de práctica de ${input.subject}`
 
     const activity: Activity = {
       id: uid(),
@@ -292,7 +292,7 @@ export const mockApi = {
   async getActivity(id: string): Promise<Activity> {
     await delay()
     const activity = load().activities.find((a) => a.id === id)
-    if (!activity) throw new Error("Activity not found")
+    if (!activity) throw new Error("Actividad no encontrada")
     return activity
   },
 
@@ -303,7 +303,7 @@ export const mockApi = {
     await delay()
     const store = load()
     const activity = store.activities.find((a) => a.id === id)
-    if (!activity) throw new Error("Activity not found")
+    if (!activity) throw new Error("Actividad no encontrada")
     Object.assign(activity, input)
     save(store)
     return activity
@@ -327,7 +327,7 @@ export const mockApi = {
     await delay()
     const store = load()
     const classroom = store.classrooms.find((c) => c.id === id)
-    if (!classroom) throw new Error("Classroom not found")
+    if (!classroom) throw new Error("Salón no encontrado")
     Object.assign(classroom, input)
     save(store)
     return classroom
@@ -425,7 +425,7 @@ export const mockApi = {
   async getLessonPlan(id: string): Promise<LessonPlan> {
     await delay()
     const plan = load().lessonPlans.find((p) => p.id === id)
-    if (!plan) throw new Error("Lesson plan not found")
+    if (!plan) throw new Error("Plan de clase no encontrado")
     return plan
   },
 
@@ -448,7 +448,7 @@ export const mockApi = {
     await delay()
     const store = load()
     const plan = store.lessonPlans.find((p) => p.id === id)
-    if (!plan) throw new Error("Lesson plan not found")
+    if (!plan) throw new Error("Plan de clase no encontrado")
     Object.assign(plan, input, { updated_at: new Date().toISOString() })
     save(store)
     return plan

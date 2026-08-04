@@ -29,8 +29,8 @@ export default function ActivityHistory() {
   return (
     <div className="grid gap-6">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight">History</h1>
-        <p className="text-muted-foreground">Every activity you've generated, in one place.</p>
+        <h1 className="text-2xl font-semibold tracking-tight">Historial</h1>
+        <p className="text-muted-foreground">Todas las actividades que has generado, en un solo lugar.</p>
       </div>
 
       {!loading && activities.length === 0 && (
@@ -38,9 +38,9 @@ export default function ActivityHistory() {
           <CardContent className="flex flex-col items-center gap-3 py-12 text-center">
             <HistoryIcon className="size-8 text-muted-foreground" />
             <div>
-              <p className="font-medium">No activities yet</p>
+              <p className="font-medium">Aún no hay actividades</p>
               <p className="text-sm text-muted-foreground">
-                Generate one from the Generator screen and it'll show up here.
+                Genera una desde la pantalla del Generador y aparecerá aquí.
               </p>
             </div>
           </CardContent>
@@ -69,12 +69,12 @@ export default function ActivityHistory() {
                   <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
                     <Badge variant="secondary">{activity.subject}</Badge>
                     <Badge variant="secondary">{activity.grade}</Badge>
-                    <Badge variant="secondary">{activity.exercises.length} exercises</Badge>
+                    <Badge variant="secondary">{activity.exercises.length} ejercicios</Badge>
                     {classroomName(activity.classroom_id) && (
                       <Badge variant="outline">{classroomName(activity.classroom_id)}</Badge>
                     )}
                     <span className="font-mono text-xs text-muted-foreground">
-                      {new Date(activity.created_at).toLocaleDateString("en-US", {
+                      {new Date(activity.created_at).toLocaleDateString("es-ES", {
                         year: "numeric",
                         month: "short",
                         day: "numeric",
@@ -86,7 +86,7 @@ export default function ActivityHistory() {
                   <Button
                     variant="ghost"
                     size="icon"
-                    aria-label="Download activity PDF"
+                    aria-label="Descargar PDF del examen"
                     onClick={(e) => {
                       e.stopPropagation()
                       exportActivityPdf(activity)
@@ -97,7 +97,7 @@ export default function ActivityHistory() {
                   <Button
                     variant="ghost"
                     size="icon"
-                    aria-label="Download answer key PDF"
+                    aria-label="Descargar PDF de respuestas"
                     onClick={(e) => {
                       e.stopPropagation()
                       exportAnswerKeyPdf(activity)

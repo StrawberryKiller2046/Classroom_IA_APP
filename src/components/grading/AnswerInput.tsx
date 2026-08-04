@@ -42,20 +42,24 @@ export default function AnswerInput({
   }
 
   if (exercise.type === "tf") {
+    const options = [
+      { value: "True", label: "Verdadero" },
+      { value: "False", label: "Falso" },
+    ]
     return (
       <div className="grid grid-cols-2 gap-3">
-        {["True", "False"].map((option) => {
-          const selected = value === option
+        {options.map((option) => {
+          const selected = value === option.value
           return (
             <Button
-              key={option}
+              key={option.value}
               type="button"
               variant={selected ? "default" : "outline"}
               size="lg"
               className="h-16 text-base"
-              onClick={() => onChange(option)}
+              onClick={() => onChange(option.value)}
             >
-              {option}
+              {option.label}
             </Button>
           )
         })}
@@ -68,7 +72,7 @@ export default function AnswerInput({
     <Input
       autoFocus
       inputMode={numeric ? "decimal" : "text"}
-      placeholder={numeric ? "Enter a number" : "Enter the student's answer"}
+      placeholder={numeric ? "Ingresa un número" : "Ingresa la respuesta del estudiante"}
       value={value}
       onChange={(e) => onChange(e.target.value)}
       className="h-14 text-base"

@@ -52,9 +52,9 @@ export default function ActivityPreview({
       })
       onActivityChange?.(updated)
       setEditingText(false)
-      toast.success("Sheet updated")
+      toast.success("Hoja actualizada")
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Failed to save changes")
+      toast.error(err instanceof Error ? err.message : "No se pudieron guardar los cambios")
     } finally {
       setApplying(false)
     }
@@ -64,7 +64,7 @@ export default function ActivityPreview({
     return (
       <WorksheetGhost
         icon={<Loader2 className="size-6 animate-spin" />}
-        text="Generating your activity..."
+        text="Generando tu actividad..."
         pulse
       />
     )
@@ -74,7 +74,7 @@ export default function ActivityPreview({
     return (
       <WorksheetGhost
         icon={<Sparkles className="size-6" />}
-        text="Fill out the form and generate an activity to preview it here."
+        text="Completa el formulario y genera una actividad para verla aquí."
       />
     )
   }
@@ -86,37 +86,37 @@ export default function ActivityPreview({
           <Badge variant="secondary">{activity.subject}</Badge>
           <Badge variant="secondary">{activity.grade}</Badge>
           <Badge variant="secondary">{activity.difficulty}</Badge>
-          <Badge variant="secondary">{activity.exercises.length} exercises</Badge>
+          <Badge variant="secondary">{activity.exercises.length} ejercicios</Badge>
         </div>
         <div className="flex flex-wrap gap-2">
           {editingText ? (
             <>
               <Button variant="outline" size="sm" onClick={cancelEditing} disabled={applying}>
                 <X />
-                Cancel
+                Cancelar
               </Button>
               <Button size="sm" onClick={applyEditing} disabled={applying}>
                 {applying ? <Loader2 className="animate-spin" /> : <FileText />}
-                Back to sheet
+                Volver a la hoja
               </Button>
             </>
           ) : (
             <>
               <Button variant="outline" size="sm" onClick={startEditing}>
                 <Code2 />
-                Edit as text
+                Editar como texto
               </Button>
               <Button variant="outline" size="sm" onClick={() => setShowAnswers((v) => !v)}>
                 {showAnswers ? <EyeOff /> : <Eye />}
-                {showAnswers ? "Hide answers" : "Show answers"}
+                {showAnswers ? "Ocultar respuestas" : "Mostrar respuestas"}
               </Button>
               <Button variant="outline" size="sm" onClick={() => exportActivityPdf(activity)}>
                 <FileText />
-                Activity PDF
+                PDF del examen
               </Button>
               <Button size="sm" onClick={() => exportAnswerKeyPdf(activity)}>
                 <FileCheck2 />
-                Answer key PDF
+                PDF de respuestas
               </Button>
             </>
           )}
@@ -126,10 +126,10 @@ export default function ActivityPreview({
       {editingText ? (
         <Card className="flex-1 gap-3 overflow-hidden py-4">
           <p className="px-4 text-xs text-muted-foreground">
-            <span className="font-medium text-foreground">#</span> title ·{" "}
-            <span className="font-medium text-foreground">##</span> question · mark the right choice with{" "}
-            <span className="font-mono text-foreground">[x]</span> · or write{" "}
-            <span className="font-mono text-foreground">Answer: ...</span> for true/false or short answer
+            <span className="font-medium text-foreground">#</span> título ·{" "}
+            <span className="font-medium text-foreground">##</span> pregunta · marca la opción correcta con{" "}
+            <span className="font-mono text-foreground">[x]</span> · o escribe{" "}
+            <span className="font-mono text-foreground">Respuesta: ...</span> para verdadero/falso o respuesta corta
           </p>
           <Textarea
             value={draft}
@@ -143,15 +143,15 @@ export default function ActivityPreview({
           <div className="border-b p-6 sm:p-8">
             <div className="mb-6 grid grid-cols-3 gap-6 border-b pb-5 text-xs tracking-wide text-muted-foreground uppercase">
               <span>
-                Name
+                Nombre
                 <span className="mt-4 block h-px bg-border" />
               </span>
               <span>
-                Teacher
+                Profesor
                 <span className="mt-4 block h-px bg-border" />
               </span>
               <span>
-                Date
+                Fecha
                 <span className="mt-4 block h-px bg-border" />
               </span>
             </div>

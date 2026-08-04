@@ -45,10 +45,10 @@ export default function ExerciseList({
           {exercise.type === "tf" && (
             <div className="mt-3 flex gap-5 pl-8 text-sm text-muted-foreground">
               <span className="flex items-center gap-2">
-                <Circle className="size-4" /> True
+                <Circle className="size-4" /> Verdadero
               </span>
               <span className="flex items-center gap-2">
-                <Circle className="size-4" /> False
+                <Circle className="size-4" /> Falso
               </span>
             </div>
           )}
@@ -56,7 +56,11 @@ export default function ExerciseList({
           {showAnswers && exercise.type !== "mc" && (
             <p className="mt-3 flex items-center gap-2 pl-8 text-sm font-medium text-success">
               <Check className="size-4" />
-              {exercise.correct_answer}
+              {exercise.type === "tf"
+                ? exercise.correct_answer === "True"
+                  ? "Verdadero"
+                  : "Falso"
+                : exercise.correct_answer}
             </p>
           )}
         </div>

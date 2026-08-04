@@ -102,16 +102,16 @@ export default function Dashboard() {
   return (
     <div className="grid gap-6">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Dashboard</h1>
-        <p className="text-muted-foreground">Compare performance across all of your classrooms.</p>
+        <h1 className="text-2xl font-semibold tracking-tight">Panel</h1>
+        <p className="text-muted-foreground">Compara el desempeño de todos tus salones.</p>
       </div>
 
       <StatStrip className="sm:grid-cols-4">
-        <Stat label="Classrooms" value={String(totals.classrooms)} />
-        <Stat label="Students" value={String(totals.students)} />
-        <Stat label="Activities" value={String(totals.activities)} />
+        <Stat label="Salones" value={String(totals.classrooms)} />
+        <Stat label="Estudiantes" value={String(totals.students)} />
+        <Stat label="Actividades" value={String(totals.activities)} />
         <Stat
-          label="Overall average"
+          label="Promedio general"
           value={totals.average !== null ? `${totals.average.toFixed(0)}%` : "-"}
         />
       </StatStrip>
@@ -119,10 +119,10 @@ export default function Dashboard() {
       <div className="flex flex-wrap gap-3">
         <Select value={gradeFilter} onValueChange={setGradeFilter}>
           <SelectTrigger className="w-44">
-            <SelectValue placeholder="Grade" />
+            <SelectValue placeholder="Grado" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All grades</SelectItem>
+            <SelectItem value="all">Todos los grados</SelectItem>
             {grades.map((g) => (
               <SelectItem key={g} value={g}>
                 {g}
@@ -133,12 +133,12 @@ export default function Dashboard() {
 
         <Select value={sortBy} onValueChange={(v) => setSortBy(v as typeof sortBy)}>
           <SelectTrigger className="w-52">
-            <SelectValue placeholder="Sort by" />
+            <SelectValue placeholder="Ordenar por" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="recent">Sort: Most recent activity</SelectItem>
-            <SelectItem value="average">Sort: Highest average</SelectItem>
-            <SelectItem value="students">Sort: Most students</SelectItem>
+            <SelectItem value="recent">Ordenar: Actividad más reciente</SelectItem>
+            <SelectItem value="average">Ordenar: Mejor promedio</SelectItem>
+            <SelectItem value="students">Ordenar: Más estudiantes</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -147,7 +147,7 @@ export default function Dashboard() {
         <Card className="border-dashed">
           <CardContent className="flex flex-col items-center gap-3 py-12 text-center">
             <LayoutDashboard className="size-8 text-muted-foreground" />
-            <p className="text-sm text-muted-foreground">No classrooms match these filters.</p>
+            <p className="text-sm text-muted-foreground">Ningún salón coincide con estos filtros.</p>
           </CardContent>
         </Card>
       )}
@@ -172,9 +172,9 @@ export default function Dashboard() {
                   ))}
                 </div>
                 <div className="flex justify-between border-t pt-3 font-mono text-sm text-muted-foreground">
-                  <span>{studentCount} students</span>
-                  <span>{activityCount} activities</span>
-                  <span>{average !== null ? `${average.toFixed(0)}% avg` : "No grades yet"}</span>
+                  <span>{studentCount} estudiantes</span>
+                  <span>{activityCount} actividades</span>
+                  <span>{average !== null ? `${average.toFixed(0)}% prom.` : "Sin calificar"}</span>
                 </div>
               </CardContent>
             </Card>

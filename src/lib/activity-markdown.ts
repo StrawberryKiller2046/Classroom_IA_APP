@@ -2,7 +2,7 @@ import type { Activity, Exercise } from "@/types/database"
 
 /** Turns an activity into plain-text markdown a teacher can freely retype:
  * "#" for the exam title, "##" per question, a checklist for multiple
- * choice (mark the right one with "[x]"), and "Answer: ..." for
+ * choice (mark the right one with "[x]"), and "Respuesta: ..." for
  * true/false or short answer questions. */
 export function activityToMarkdown(activity: Activity): string {
   const lines: string[] = [`# ${activity.exam_name}`, ""]
@@ -14,8 +14,10 @@ export function activityToMarkdown(activity: Activity): string {
         const checked = option === exercise.correct_answer ? "x" : " "
         lines.push(`- [${checked}] ${option}`)
       }
+    } else if (exercise.type === "tf") {
+      lines.push(`Respuesta: ${exercise.correct_answer === "True" ? "Verdadero" : "Falso"}`)
     } else {
-      lines.push(`Answer: ${exercise.correct_answer}`)
+      lines.push(`Respuesta: ${exercise.correct_answer}`)
     }
     lines.push("")
   })
@@ -72,7 +74,7 @@ export function markdownToActivity(markdown: string, fallbackExamName: string): 
       current.options.push({ text: plainBulletMatch[1].trim(), correct: false })
       continue
     }
-    const answerMatch = line.match(/^answer:\s*(.+)$/i)
+    const answerMatch = line.match(/^(?:answer|respuesta):\s*(.+)$/i)
     if (answerMatch) {
       current.answer = answerMatch[1].trim()
       continue
@@ -83,19 +85,19 @@ export function markdownToActivity(markdown: string, fallbackExamName: string): 
   if (current) blocks.push(current)
 
   if (blocks.length === 0) {
-    return { error: 'Add at least one question, starting the line with "## ".' }
+    return { error: 'Agrega al menos una pregunta, empezando la línea con "## ".' }
   }
 
   const exercises: Exercise[] = []
   for (const [index, block] of blocks.entries()) {
     const n = index + 1
     if (!block.question) {
-      return { error: `Question ${n} is missing its text after "## ".` }
+      return { error: `A la pregunta ${n} le falta el texto después de "## ".` }
     }
     if (block.options.length > 0) {
       const correct = block.options.find((o) => o.correct)
       if (!correct) {
-        return { error: `Question ${n} needs a correct option marked with "[x]".` }
+        return { error: `La pregunta ${n} necesita una opción correcta marcada con "[x]".` }
       }
       exercises.push({
         id: `q${n}`,
@@ -106,15 +108,18 @@ export function markdownToActivity(markdown: string, fallbackExamName: string): 
       })
     } else if (block.answer) {
       const normalized = block.answer.toLowerCase()
-      const isBoolean = normalized === "true" || normalized === "false"
+      const isBoolean = ["true", "false", "verdadero", "falso"].includes(normalized)
+      const isTrue = normalized === "true" || normalized === "verdadero"
       exercises.push({
         id: `q${n}`,
         type: isBoolean ? "tf" : "short",
         question: block.question,
-        correct_answer: isBoolean ? (normalized === "true" ? "True" : "False") : block.answer,
+        correct_answer: isBoolean ? (isTrue ? "True" : "False") : block.answer,
       })
     } else {
-      return { error: `Question ${n} needs either options (mark the correct one with "[x]") or an "Answer:" line.` }
+      return {
+        error: `La pregunta ${n} necesita opciones (marca la correcta con "[x]") o una línea "Respuesta: ...".`,
+      }
     }
   }
 

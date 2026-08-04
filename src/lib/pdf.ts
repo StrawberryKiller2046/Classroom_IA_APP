@@ -67,7 +67,7 @@ export function exportActivityPdf(activity: Activity) {
   const ctx = newDoc()
   const { doc, marginX, maxWidth, ensureSpace } = ctx
 
-  drawHeader(ctx, activity, "Name: _______________________________     Date: _______________")
+  drawHeader(ctx, activity, "Nombre: _______________________________     Fecha: _______________")
 
   doc.setFontSize(12)
   activity.exercises.forEach((exercise, index) => {
@@ -88,7 +88,7 @@ export function exportActivityPdf(activity: Activity) {
       })
     } else if (exercise.type === "tf") {
       ensureSpace(14)
-      doc.text("   ☐ True      ☐ False", marginX, ctx.y)
+      doc.text("   ☐ Verdadero      ☐ Falso", marginX, ctx.y)
       ctx.y += 14
     } else {
       ensureSpace(30)
@@ -98,7 +98,7 @@ export function exportActivityPdf(activity: Activity) {
     ctx.y += 12
   })
 
-  doc.save(fileName(activity.exam_name, "activity"))
+  doc.save(fileName(activity.exam_name, "examen"))
 }
 
 /** A standalone answer key, downloaded separately so it never accidentally
@@ -107,11 +107,13 @@ export function exportAnswerKeyPdf(activity: Activity) {
   const ctx = newDoc()
   const { doc, marginX, maxWidth, ensureSpace } = ctx
 
-  drawHeader(ctx, activity, "Answer key, for teacher use only")
+  drawHeader(ctx, activity, "Hoja de respuestas, solo para uso del profesor")
 
   doc.setFontSize(12)
   activity.exercises.forEach((exercise, index) => {
-    const answer = activity.answer_key?.[exercise.id] ?? exercise.correct_answer
+    const rawAnswer = activity.answer_key?.[exercise.id] ?? exercise.correct_answer
+    const answer =
+      exercise.type === "tf" ? (rawAnswer === "True" ? "Verdadero" : "Falso") : rawAnswer
     doc.setFont("helvetica", "bold")
     const questionLines = doc.splitTextToSize(`${index + 1}. ${exercise.question}`, maxWidth)
     ensureSpace(questionLines.length * 16 + 4)
@@ -127,5 +129,5 @@ export function exportAnswerKeyPdf(activity: Activity) {
     doc.setTextColor(20)
   })
 
-  doc.save(fileName(activity.exam_name, "answer-key"))
+  doc.save(fileName(activity.exam_name, "respuestas"))
 }

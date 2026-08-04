@@ -23,7 +23,7 @@ export default function GradingScreen() {
 
   useEffect(() => {
     if (!activityId || !classroomId) return
-    getActivity(activityId).then(setActivity).catch(() => toast.error("Activity not found"))
+    getActivity(activityId).then(setActivity).catch(() => toast.error("Actividad no encontrada"))
     listStudents(classroomId).then(setStudents).catch(() => {})
   }, [activityId, classroomId])
 
@@ -82,12 +82,12 @@ export default function GradingScreen() {
       })
       toast.success(
         isRegrade
-          ? `Updated: ${student.name} now scores ${score.toFixed(0)}%`
-          : `Saved: ${student.name} scored ${score.toFixed(0)}%`
+          ? `Actualizado: ${student.name} ahora tiene ${score.toFixed(0)}%`
+          : `Guardado: ${student.name} obtuvo ${score.toFixed(0)}%`
       )
       navigate(`/classrooms/${classroomId}`)
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Failed to save result")
+      toast.error(err instanceof Error ? err.message : "No se pudo guardar el resultado")
     } finally {
       setSaving(false)
     }
@@ -101,10 +101,10 @@ export default function GradingScreen() {
           className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
         >
           <ArrowLeft className="size-4" />
-          Back to classroom
+          Volver al salón
         </Link>
         <span className="text-sm font-medium text-muted-foreground">
-          {isReview ? "Review" : `Question ${step + 1} of ${total}`}
+          {isReview ? "Revisión" : `Pregunta ${step + 1} de ${total}`}
         </span>
       </div>
 
@@ -113,7 +113,7 @@ export default function GradingScreen() {
       <Card>
         <CardHeader>
           <CardTitle className="text-base font-normal text-muted-foreground">
-            {isRegrade ? "Regrading" : "Grading"}{" "}
+            {isRegrade ? "Recalificando a" : "Calificando a"}{" "}
             <span className="font-semibold text-foreground">{student.name}</span>
             <span className="mx-1.5 text-muted-foreground/40">/</span>
             {activity.exam_name}
@@ -134,12 +134,19 @@ export default function GradingScreen() {
           {isReview && (
             <div className="grid gap-4">
               <div className="rounded-lg border bg-muted/40 p-4 text-center">
-                <p className="text-sm text-muted-foreground">Score</p>
+                <p className="text-sm text-muted-foreground">Puntaje</p>
                 <p className="text-3xl font-bold">{score.toFixed(0)}%</p>
               </div>
               <div className="grid gap-2">
                 {activity.exercises.map((ex, i) => {
-                  const given = answers[ex.id] || "No answer"
+                  const rawGiven = answers[ex.id]
+                  const given = rawGiven
+                    ? ex.type === "tf"
+                      ? rawGiven === "True"
+                        ? "Verdadero"
+                        : "Falso"
+                      : rawGiven
+                    : "Sin respuesta"
                   const correctAnswer = activity.answer_key?.[ex.id] ?? ex.correct_answer
                   const correct = answers[ex.id] && isCorrectAnswer(answers[ex.id], correctAnswer, ex.type)
                   return (
@@ -165,17 +172,17 @@ export default function GradingScreen() {
       <div className="flex items-center justify-between gap-3">
         <Button variant="outline" onClick={goPrev} disabled={step === 0}>
           <ArrowLeft />
-          Previous
+          Anterior
         </Button>
         {!isReview ? (
           <Button onClick={goNext}>
-            {isLastStep ? "Review" : "Next"}
+            {isLastStep ? "Revisar" : "Siguiente"}
             <ArrowRight />
           </Button>
         ) : (
           <Button onClick={finishAndSave} disabled={saving}>
             {saving ? <Loader2 className="animate-spin" /> : <Check />}
-            {isRegrade ? "Update result" : "Save result"}
+            {isRegrade ? "Actualizar resultado" : "Guardar resultado"}
           </Button>
         )}
       </div>

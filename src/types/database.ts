@@ -87,11 +87,11 @@ export interface LessonPlan {
 export const GENERATION_LIMIT = 30
 
 export const WEEKDAYS = [
-  { key: "monday", label: "Monday" },
-  { key: "tuesday", label: "Tuesday" },
-  { key: "wednesday", label: "Wednesday" },
-  { key: "thursday", label: "Thursday" },
-  { key: "friday", label: "Friday" },
+  { key: "monday", label: "Lunes" },
+  { key: "tuesday", label: "Martes" },
+  { key: "wednesday", label: "Miércoles" },
+  { key: "thursday", label: "Jueves" },
+  { key: "friday", label: "Viernes" },
 ] as const
 
 export interface UsageCounter {
@@ -109,38 +109,38 @@ export interface Purchase {
   created_at: string
 }
 
-// Matches the Spanish-speaking system's three stages (Primaria / Secundaria /
-// Bachillerato), in English. Grades are currently capped at Primary (see
-// GRADES below), but the field stays editable in case that changes later.
-export const EDUCATION_LEVELS = ["Primary", "Secondary", "Baccalaureate"] as const
+// Matches the Spanish-speaking system's three stages. Grades are currently
+// capped at Primaria (see GRADES below), but the field stays editable in
+// case that changes later.
+export const EDUCATION_LEVELS = ["Primaria", "Secundaria", "Bachillerato"] as const
 
-export const DIFFICULTIES = ["Easy", "Medium", "Hard", "Mixed"] as const
+export const DIFFICULTIES = ["Fácil", "Medio", "Difícil", "Mixto"] as const
 
 export const EXERCISE_TYPES = [
-  { value: "mc", label: "Multiple Choice" },
-  { value: "tf", label: "True / False" },
-  { value: "short", label: "Short Answer" },
-  { value: "mixed", label: "Mixed" },
+  { value: "mc", label: "Opción múltiple" },
+  { value: "tf", label: "Verdadero / Falso" },
+  { value: "short", label: "Respuesta corta" },
+  { value: "mixed", label: "Mixto" },
 ] as const
 
 export const COUNTRIES = [
-  "Argentina", "Australia", "Austria", "Belgium", "Bolivia", "Brazil",
-  "Canada", "Chile", "China", "Colombia", "Costa Rica", "Cuba",
-  "Czech Republic", "Denmark", "Dominican Republic", "Ecuador", "Egypt",
-  "El Salvador", "Finland", "France", "Germany", "Greece", "Guatemala",
-  "Honduras", "Hong Kong", "Hungary", "India", "Indonesia", "Ireland",
-  "Israel", "Italy", "Jamaica", "Japan", "Kenya", "Malaysia", "Mexico",
-  "Morocco", "Netherlands", "New Zealand", "Nicaragua", "Nigeria",
-  "Norway", "Panama", "Paraguay", "Peru", "Philippines", "Poland",
-  "Portugal", "Puerto Rico", "Romania", "Russia", "Saudi Arabia",
-  "Singapore", "South Africa", "South Korea", "Spain", "Sweden",
-  "Switzerland", "Thailand", "Turkey", "Ukraine", "United Arab Emirates",
-  "United Kingdom", "United States", "Uruguay", "Venezuela", "Vietnam",
+  "Argentina", "Australia", "Austria", "Bélgica", "Bolivia", "Brasil",
+  "Canadá", "Chile", "China", "Colombia", "Costa Rica", "Cuba",
+  "República Checa", "Dinamarca", "República Dominicana", "Ecuador", "Egipto",
+  "El Salvador", "Finlandia", "Francia", "Alemania", "Grecia", "Guatemala",
+  "Honduras", "Hong Kong", "Hungría", "India", "Indonesia", "Irlanda",
+  "Israel", "Italia", "Jamaica", "Japón", "Kenia", "Malasia", "México",
+  "Marruecos", "Países Bajos", "Nueva Zelanda", "Nicaragua", "Nigeria",
+  "Noruega", "Panamá", "Paraguay", "Perú", "Filipinas", "Polonia",
+  "Portugal", "Puerto Rico", "Rumania", "Rusia", "Arabia Saudita",
+  "Singapur", "Sudáfrica", "Corea del Sur", "España", "Suecia",
+  "Suiza", "Tailandia", "Turquía", "Ucrania", "Emiratos Árabes Unidos",
+  "Reino Unido", "Estados Unidos", "Uruguay", "Venezuela", "Vietnam",
 ] as const
 
 export const GRADES = [
-  "Kindergarten",
-  "1st Grade", "2nd Grade", "3rd Grade", "4th Grade", "5th Grade", "6th Grade",
+  "Preescolar",
+  "1er Grado", "2do Grado", "3er Grado", "4to Grado", "5to Grado", "6to Grado",
 ] as const
 
 /** Best-guess education level for a grade, so the field can be pre-filled
@@ -149,14 +149,14 @@ export const GRADES = [
 export function inferEducationLevel(grade: string): (typeof EDUCATION_LEVELS)[number] | null {
   const index = GRADES.indexOf(grade as (typeof GRADES)[number])
   if (index === -1) return null
-  return "Primary"
+  return "Primaria"
 }
 
 // Subjects actually taught up through 6th grade — no split sciences
 // (biology/chemistry/physics), civics, economics, or philosophy yet.
 export const SUBJECTS = [
-  "Mathematics", "Science", "English / Language Arts",
-  "Native Language / Literature", "History", "Geography", "Social Studies",
-  "Art", "Music", "Physical Education", "Foreign Language",
-  "Environmental Science", "Health",
+  "Matemáticas", "Ciencias", "Inglés / Lengua",
+  "Lengua Materna / Literatura", "Historia", "Geografía", "Estudios Sociales",
+  "Arte", "Música", "Educación Física", "Idioma Extranjero",
+  "Ciencias Ambientales", "Salud",
 ] as const

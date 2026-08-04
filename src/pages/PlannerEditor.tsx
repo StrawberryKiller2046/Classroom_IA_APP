@@ -58,7 +58,7 @@ export default function PlannerEditor() {
         setPeriods(plan.periods.length ? plan.periods : [emptyPeriod()])
       })
       .catch((err) => {
-        toast.error(err instanceof Error ? err.message : "Failed to load lesson plan")
+        toast.error(err instanceof Error ? err.message : "No se pudo cargar el plan de clase")
         navigate("/planner")
       })
       .finally(() => setLoading(false))
@@ -74,7 +74,7 @@ export default function PlannerEditor() {
 
   const onSave = async () => {
     if (!name.trim()) {
-      toast.error("Give the plan a name first")
+      toast.error("Primero ponle un nombre al plan")
       return
     }
     setSaving(true)
@@ -82,14 +82,14 @@ export default function PlannerEditor() {
       const input = { name, grade: grade || null, notes: notes || null, periods }
       if (isNew) {
         const created = await createLessonPlan(input)
-        toast.success("Lesson plan saved")
+        toast.success("Plan de clase guardado")
         navigate(`/planner/${created.id}`)
       } else {
         await updateLessonPlan(planId!, input)
-        toast.success("Lesson plan saved")
+        toast.success("Plan de clase guardado")
       }
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Failed to save lesson plan")
+      toast.error(err instanceof Error ? err.message : "No se pudo guardar el plan de clase")
     } finally {
       setSaving(false)
     }
@@ -99,13 +99,13 @@ export default function PlannerEditor() {
     downloadExcel(
       periods,
       [
-        { header: "Time", cell: (p) => p.time_label },
+        { header: "Hora", cell: (p) => p.time_label },
         ...WEEKDAYS.map((day) => ({
           header: day.label,
           cell: (p: LessonPlanPeriod) => p[day.key],
         })),
       ],
-      name || "lesson-plan"
+      name || "plan-de-clase"
     )
   }
 
@@ -119,25 +119,25 @@ export default function PlannerEditor() {
           className="mb-2 flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
         >
           <ArrowLeft className="size-4" />
-          All lesson plans
+          Todos los planes de clase
         </Link>
         <h1 className="text-2xl font-semibold tracking-tight">
-          {isNew ? "New lesson plan" : "Edit lesson plan"}
+          {isNew ? "Nuevo plan de clase" : "Editar plan de clase"}
         </h1>
-        <p className="text-muted-foreground">Fill in the schedule, then save or download it as a spreadsheet.</p>
+        <p className="text-muted-foreground">Completa el horario y luego guárdalo o descárgalo como hoja de cálculo.</p>
       </div>
 
       <Card>
         <CardContent className="grid gap-4 py-6 sm:grid-cols-2">
           <div className="grid gap-1.5">
-            <Label>Plan name</Label>
-            <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. 5th Grade - Week 1" />
+            <Label>Nombre del plan</Label>
+            <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="ej. 5to Grado - Semana 1" />
           </div>
           <div className="grid gap-1.5">
-            <Label>Grade (optional)</Label>
+            <Label>Grado (opcional)</Label>
             <Select value={grade} onValueChange={setGrade}>
               <SelectTrigger className="w-full">
-                <SelectValue placeholder="No grade selected" />
+                <SelectValue placeholder="Sin grado seleccionado" />
               </SelectTrigger>
               <SelectContent>
                 {GRADES.map((g) => (
@@ -149,7 +149,7 @@ export default function PlannerEditor() {
             </Select>
           </div>
           <div className="grid gap-1.5 sm:col-span-2">
-            <Label>Notes (optional)</Label>
+            <Label>Notas (opcional)</Label>
             <Textarea value={notes} onChange={(e) => setNotes(e.target.value)} rows={2} />
           </div>
         </CardContent>
@@ -163,7 +163,7 @@ export default function PlannerEditor() {
               <thead>
                 <tr>
                   <th className="w-40 border-b px-2 pb-2 text-left text-xs font-medium text-muted-foreground">
-                    Time
+                    Hora
                   </th>
                   {WEEKDAYS.map((day) => (
                     <th
@@ -191,7 +191,7 @@ export default function PlannerEditor() {
                         <Input
                           value={period[day.key]}
                           onChange={(e) => updatePeriod(period.id, day.key, e.target.value)}
-                          placeholder="Subject"
+                          placeholder="Materia"
                         />
                       </td>
                     ))}
@@ -199,7 +199,7 @@ export default function PlannerEditor() {
                       <Button
                         variant="ghost"
                         size="icon"
-                        aria-label="Remove period"
+                        aria-label="Quitar período"
                         onClick={() => removePeriod(period.id)}
                         disabled={periods.length <= 1}
                       >
@@ -227,7 +227,7 @@ export default function PlannerEditor() {
                   <Button
                     variant="ghost"
                     size="icon"
-                    aria-label="Remove period"
+                    aria-label="Quitar período"
                     onClick={() => removePeriod(period.id)}
                     disabled={periods.length <= 1}
                   >
@@ -243,7 +243,7 @@ export default function PlannerEditor() {
                       <Input
                         value={period[day.key]}
                         onChange={(e) => updatePeriod(period.id, day.key, e.target.value)}
-                        placeholder="Subject"
+                        placeholder="Materia"
                       />
                     </div>
                   ))}
@@ -254,7 +254,7 @@ export default function PlannerEditor() {
 
           <Button variant="outline" size="sm" className="mt-4" onClick={addPeriod}>
             <Plus />
-            Add period
+            Agregar período
           </Button>
         </CardContent>
       </Card>
@@ -262,11 +262,11 @@ export default function PlannerEditor() {
       <div className="flex justify-end gap-2">
         <Button variant="outline" onClick={onDownload}>
           <Download />
-          Download Excel
+          Descargar Excel
         </Button>
         <Button onClick={onSave} disabled={saving}>
           <Save />
-          {isNew ? "Save plan" : "Save changes"}
+          {isNew ? "Guardar plan" : "Guardar cambios"}
         </Button>
       </div>
     </div>

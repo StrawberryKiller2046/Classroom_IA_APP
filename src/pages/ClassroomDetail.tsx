@@ -87,7 +87,7 @@ export default function ClassroomDetail() {
           className="mb-2 flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
         >
           <ArrowLeft className="size-4" />
-          All classrooms
+          Todos los salones
         </Link>
         <h1 className="text-2xl font-semibold tracking-tight">{classroom.name}</h1>
         <p className="text-muted-foreground">{classroom.grade}</p>
@@ -95,9 +95,9 @@ export default function ClassroomDetail() {
 
       <Tabs defaultValue="students">
         <TabsList>
-          <TabsTrigger value="students">Students</TabsTrigger>
-          <TabsTrigger value="activities">Activities</TabsTrigger>
-          <TabsTrigger value="results">Results</TabsTrigger>
+          <TabsTrigger value="students">Estudiantes</TabsTrigger>
+          <TabsTrigger value="activities">Actividades</TabsTrigger>
+          <TabsTrigger value="results">Resultados</TabsTrigger>
         </TabsList>
 
         <TabsContent value="students" className="mt-4">
@@ -156,7 +156,7 @@ function StudentsPanel({
       setOpen(false)
       onChanged()
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Failed to add student")
+      toast.error(err instanceof Error ? err.message : "No se pudo agregar el estudiante")
     } finally {
       setSubmitting(false)
     }
@@ -167,7 +167,7 @@ function StudentsPanel({
       await deleteStudent(id)
       onChanged()
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Failed to remove student")
+      toast.error(err instanceof Error ? err.message : "No se pudo quitar el estudiante")
     }
   }
 
@@ -178,26 +178,26 @@ function StudentsPanel({
           <DialogTrigger asChild>
             <Button size="sm">
               <Plus />
-              Add student
+              Agregar estudiante
             </Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Add student</DialogTitle>
+              <DialogTitle>Agregar estudiante</DialogTitle>
             </DialogHeader>
             <div className="grid gap-4">
               <div className="grid gap-1.5">
-                <Label>Name</Label>
-                <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Student name" />
+                <Label>Nombre</Label>
+                <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Nombre del estudiante" />
               </div>
               <div className="grid gap-1.5">
-                <Label>Notes (optional)</Label>
+                <Label>Notas (opcional)</Label>
                 <Input value={notes} onChange={(e) => setNotes(e.target.value)} />
               </div>
             </div>
             <DialogFooter>
               <Button onClick={onAdd} disabled={submitting}>
-                Add
+                Agregar
               </Button>
             </DialogFooter>
           </DialogContent>
@@ -205,7 +205,7 @@ function StudentsPanel({
       </div>
 
       {students.length === 0 ? (
-        <EmptyState icon={Users} text="No students yet. Add your first one." />
+        <EmptyState icon={Users} text="Aún no hay estudiantes. Agrega el primero." />
       ) : (
         <Card>
           <CardContent className="divide-y p-0">
@@ -215,7 +215,7 @@ function StudentsPanel({
                   <p className="font-medium">{student.name}</p>
                   {student.notes && <p className="text-sm text-muted-foreground">{student.notes}</p>}
                 </div>
-                <Button variant="ghost" size="icon" onClick={() => onDelete(student.id)} aria-label="Remove student">
+                <Button variant="ghost" size="icon" onClick={() => onDelete(student.id)} aria-label="Quitar estudiante">
                   <Trash2 className="size-4 text-muted-foreground" />
                 </Button>
               </div>
@@ -245,7 +245,7 @@ function ActivitiesPanel({
     return (
       <EmptyState
         icon={ClipboardCheck}
-        text="No activities linked yet. Generate one from the Generator screen and select this classroom."
+        text="Aún no hay actividades vinculadas. Genera una desde la pantalla del Generador y selecciona este salón."
       />
     )
   }
@@ -259,7 +259,7 @@ function ActivitiesPanel({
       {subjects.length > 1 && (
         <Tabs value={subjectFilter} onValueChange={setSubjectFilter}>
           <TabsList>
-            <TabsTrigger value="all">All subjects</TabsTrigger>
+            <TabsTrigger value="all">Todas las materias</TabsTrigger>
             {subjects.map((s) => (
               <TabsTrigger key={s} value={s}>
                 {s}
@@ -300,7 +300,7 @@ function ActivitiesPanel({
               </div>
               <div className="flex shrink-0 items-center gap-3">
                 <span className="font-mono text-xs text-muted-foreground">
-                  {gradedCount}/{students.length} graded
+                  {gradedCount}/{students.length} calificados
                 </span>
                 <ChevronDown
                   className={cn("size-4 text-muted-foreground transition-transform", expanded && "rotate-180")}
@@ -312,7 +312,7 @@ function ActivitiesPanel({
               <div className="divide-y border-t">
                 {students.length === 0 ? (
                   <p className="px-5 py-4 text-sm text-muted-foreground">
-                    Add students to start grading this activity.
+                    Agrega estudiantes para empezar a calificar esta actividad.
                   </p>
                 ) : (
                   students.map((student) => {
@@ -330,14 +330,14 @@ function ActivitiesPanel({
                               </span>
                               <Button variant="outline" size="sm" onClick={() => onGrade(activity.id, student.id)}>
                                 <RotateCcw />
-                                Regrade
+                                Recalificar
                               </Button>
                             </>
                           ) : (
                             <>
-                              <span className="text-sm text-muted-foreground">Not graded</span>
+                              <span className="text-sm text-muted-foreground">Sin calificar</span>
                               <Button variant="outline" size="sm" onClick={() => onGrade(activity.id, student.id)}>
-                                Grade
+                                Calificar
                               </Button>
                             </>
                           )}
@@ -387,7 +387,7 @@ function ResultsPanel({
   const [subjectFilter, setSubjectFilter] = useState("all")
 
   if (results.length === 0) {
-    return <EmptyState icon={ClipboardCheck} text="No graded results yet." />
+    return <EmptyState icon={ClipboardCheck} text="Aún no hay resultados calificados." />
   }
 
   const activityById = new Map(activities.map((a) => [a.id, a]))
@@ -402,7 +402,7 @@ function ResultsPanel({
         {subjects.length > 1 && (
           <ResultsScopeSelect subjects={subjects} value={subjectFilter} onChange={setSubjectFilter} />
         )}
-        <EmptyState icon={ClipboardCheck} text="No graded results for this subject yet." />
+        <EmptyState icon={ClipboardCheck} text="Aún no hay resultados calificados para esta materia." />
       </div>
     )
   }
@@ -440,15 +440,15 @@ function ResultsPanel({
     .sort((a, b) => (a.avg ?? 0) - (b.avg ?? 0))
 
   const onExport = () => {
-    const scopeLabel = subjectFilter === "all" ? "All subjects" : subjectFilter
+    const scopeLabel = subjectFilter === "all" ? "Todas las materias" : subjectFilter
     downloadExcel(
       byStudent,
       [
-        { header: "Student", cell: (row) => row.student.name },
-        { header: "Average score (%)", cell: (row) => Math.round(row.avg ?? 0) },
-        { header: "Graded submissions", cell: (row) => row.count },
+        { header: "Estudiante", cell: (row) => row.student.name },
+        { header: "Promedio (%)", cell: (row) => Math.round(row.avg ?? 0) },
+        { header: "Entregas calificadas", cell: (row) => row.count },
       ],
-      `${classroomName}-results-${scopeLabel}`
+      `${classroomName}-resultados-${scopeLabel}`
     )
   }
 
@@ -462,26 +462,26 @@ function ResultsPanel({
         )}
         <Button variant="outline" size="sm" onClick={onExport}>
           <Download />
-          Export to Excel
+          Exportar a Excel
         </Button>
       </div>
 
       <StatStrip className="sm:grid-cols-3">
-        <Stat label="Average score" value={`${average.toFixed(0)}%`} />
-        <Stat label="Graded submissions" value={String(scopedResults.length)} />
-        <Stat label="Students graded" value={String(byStudent.length)} />
+        <Stat label="Promedio" value={`${average.toFixed(0)}%`} />
+        <Stat label="Entregas calificadas" value={String(scopedResults.length)} />
+        <Stat label="Estudiantes calificados" value={String(byStudent.length)} />
       </StatStrip>
 
       {mostMissed.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Most missed questions</CardTitle>
+            <CardTitle className="text-base">Preguntas más falladas</CardTitle>
           </CardHeader>
           <CardContent className="grid gap-2">
             {mostMissed.map((item, i) => (
               <div key={i} className="flex items-center justify-between text-sm">
                 <span className="text-muted-foreground">{item.question}</span>
-                <Badge variant="destructive">{item.misses} missed</Badge>
+                <Badge variant="destructive">{item.misses} fallos</Badge>
               </div>
             ))}
           </CardContent>
@@ -490,14 +490,14 @@ function ResultsPanel({
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Per-student breakdown</CardTitle>
+          <CardTitle className="text-base">Desglose por estudiante</CardTitle>
         </CardHeader>
         <CardContent className="divide-y p-0">
           {byStudent.map(({ student, avg, count }) => (
             <div key={student.id} className="flex items-center justify-between px-4 py-3 text-sm">
               <span className="font-medium">{student.name}</span>
               <span className={cn("font-mono", relativeScoreColor(avg ?? 0, average))}>
-                {avg?.toFixed(0)}% avg, {count} graded
+                {avg?.toFixed(0)}% prom., {count} calificadas
               </span>
             </div>
           ))}
@@ -519,10 +519,10 @@ function ResultsScopeSelect({
   return (
     <Select value={value} onValueChange={onChange}>
       <SelectTrigger className="w-56">
-        <SelectValue placeholder="Scope" />
+        <SelectValue placeholder="Alcance" />
       </SelectTrigger>
       <SelectContent>
-        <SelectItem value="all">All subjects (whole grade)</SelectItem>
+        <SelectItem value="all">Todas las materias (todo el grado)</SelectItem>
         {subjects.map((s) => (
           <SelectItem key={s} value={s}>
             {s}

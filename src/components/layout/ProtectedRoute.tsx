@@ -25,9 +25,9 @@ export default function ProtectedRoute({ children }: { children: ReactNode }) {
       <div className="flex min-h-svh items-center justify-center p-4">
         <div className="flex max-w-sm flex-col items-center gap-2 text-center">
           <TriangleAlert className="size-6 text-destructive" />
-          <p className="font-medium">Couldn't start a session</p>
+          <p className="font-medium">No se pudo iniciar una sesión</p>
           <p className="text-sm text-muted-foreground">
-            Enable anonymous sign-ins for this Supabase project (Authentication → Providers → Anonymous) and reload.
+            Activa el inicio de sesión anónimo en este proyecto de Supabase (Authentication → Providers → Anonymous) y recarga la página.
           </p>
         </div>
       </div>

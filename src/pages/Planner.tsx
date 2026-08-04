@@ -15,7 +15,7 @@ function exportPlan(plan: LessonPlan) {
   downloadExcel(
     plan.periods,
     [
-      { header: "Time", cell: (p) => p.time_label },
+      { header: "Hora", cell: (p) => p.time_label },
       ...WEEKDAYS.map((day) => ({
         header: day.label,
         cell: (p: LessonPlan["periods"][number]) => p[day.key],
@@ -54,10 +54,10 @@ export default function Planner() {
   const onDelete = async (id: string) => {
     try {
       await deleteLessonPlan(id)
-      toast.success("Lesson plan deleted")
+      toast.success("Plan de clase eliminado")
       refresh()
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Failed to delete lesson plan")
+      toast.error(err instanceof Error ? err.message : "No se pudo eliminar el plan de clase")
     }
   }
 
@@ -65,13 +65,13 @@ export default function Planner() {
     <div className="grid gap-6">
       <div className="flex items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Lesson Planner</h1>
-          <p className="text-muted-foreground">Build a weekly schedule and download it whenever you need it.</p>
+          <h1 className="text-2xl font-semibold tracking-tight">Planificador de Clases</h1>
+          <p className="text-muted-foreground">Arma un horario semanal y descárgalo cuando lo necesites.</p>
         </div>
         <Button asChild>
           <Link to="/planner/new">
             <Plus />
-            New plan
+            Nuevo plan
           </Link>
         </Button>
       </div>
@@ -82,7 +82,7 @@ export default function Planner() {
           <Input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search plans by name or grade"
+            placeholder="Buscar planes por nombre o grado"
             className="pl-9"
           />
         </div>
@@ -93,8 +93,8 @@ export default function Planner() {
           <CardContent className="flex flex-col items-center gap-3 py-12 text-center">
             <CalendarDays className="size-8 text-muted-foreground" />
             <div>
-              <p className="font-medium">No lesson plans yet</p>
-              <p className="text-sm text-muted-foreground">Create one to start building your weekly schedule.</p>
+              <p className="font-medium">Aún no hay planes de clase</p>
+              <p className="text-sm text-muted-foreground">Crea uno para empezar a armar tu horario semanal.</p>
             </div>
           </CardContent>
         </Card>
@@ -104,7 +104,7 @@ export default function Planner() {
         <Card className="border-dashed">
           <CardContent className="flex flex-col items-center gap-3 py-12 text-center">
             <Search className="size-8 text-muted-foreground" />
-            <p className="text-sm text-muted-foreground">No plans match "{query}".</p>
+            <p className="text-sm text-muted-foreground">Ningún plan coincide con "{query}".</p>
           </CardContent>
         </Card>
       )}
@@ -117,10 +117,10 @@ export default function Planner() {
                 <p className="truncate font-medium hover:underline">{plan.name}</p>
                 <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
                   {plan.grade && <Badge variant="secondary">{plan.grade}</Badge>}
-                  <Badge variant="outline">{plan.periods.length} periods</Badge>
+                  <Badge variant="outline">{plan.periods.length} períodos</Badge>
                   <span className="font-mono text-xs text-muted-foreground">
-                    Updated{" "}
-                    {new Date(plan.updated_at).toLocaleDateString("en-US", {
+                    Actualizado{" "}
+                    {new Date(plan.updated_at).toLocaleDateString("es-ES", {
                       year: "numeric",
                       month: "short",
                       day: "numeric",
@@ -132,7 +132,7 @@ export default function Planner() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  aria-label="Download lesson plan"
+                  aria-label="Descargar plan de clase"
                   onClick={() => exportPlan(plan)}
                 >
                   <Download className="size-4" />
@@ -140,7 +140,7 @@ export default function Planner() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  aria-label="Delete lesson plan"
+                  aria-label="Eliminar plan de clase"
                   onClick={() => onDelete(plan.id)}
                 >
                   <Trash2 className="size-4 text-muted-foreground" />

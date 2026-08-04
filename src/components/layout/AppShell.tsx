@@ -12,11 +12,11 @@ import { cn } from "@/lib/utils"
 import { isSupabaseConfigured } from "@/lib/supabase"
 
 const NAV_ITEMS = [
-  { to: "/", label: "Generator", icon: Sparkles, end: true },
-  { to: "/history", label: "History", icon: History },
-  { to: "/classrooms", label: "Classrooms", icon: School },
-  { to: "/planner", label: "Planner", icon: CalendarDays },
-  { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { to: "/", label: "Generador", icon: Sparkles, end: true },
+  { to: "/history", label: "Historial", icon: History },
+  { to: "/classrooms", label: "Salones", icon: School },
+  { to: "/planner", label: "Planificador", icon: CalendarDays },
+  { to: "/dashboard", label: "Panel", icon: LayoutDashboard },
 ]
 
 export default function AppShell() {
@@ -64,7 +64,7 @@ export default function AppShell() {
         {!isSupabaseConfigured && (
           <div className="flex items-center gap-2 border-b bg-warning/15 px-4 py-2 text-sm text-warning-foreground">
             <FlaskConical className="size-4 shrink-0" strokeWidth={2} />
-            <span>Demo mode: sample data stored on this device only. Connect Supabase to make it real.</span>
+            <span>Modo demo: los datos de muestra se guardan solo en este dispositivo. Conecta Supabase para hacerlo real.</span>
           </div>
         )}
 

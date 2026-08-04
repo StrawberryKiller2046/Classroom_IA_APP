@@ -32,24 +32,24 @@ import {
 import ActivityPreview from "@/components/activities/ActivityPreview"
 
 const formSchema = z.object({
-  country: z.string().min(1, "Required"),
-  education_level: z.string().min(1, "Required"),
-  grade: z.string().min(1, "Required"),
-  subject: z.string().min(1, "Required"),
+  country: z.string().min(1, "Requerido"),
+  education_level: z.string().min(1, "Requerido"),
+  grade: z.string().min(1, "Requerido"),
+  subject: z.string().min(1, "Requerido"),
   topic: z.string().optional(),
-  exercise_type: z.string().min(1, "Required"),
-  difficulty: z.string().min(1, "Required"),
+  exercise_type: z.string().min(1, "Requerido"),
+  difficulty: z.string().min(1, "Requerido"),
   num_exercises: z.number().int().min(1).max(50),
-  exam_name: z.string().min(1, "Required"),
+  exam_name: z.string().min(1, "Requerido"),
   classroom_id: z.string().optional(),
 })
 
 type FormValues = z.infer<typeof formSchema>
 
 function defaultExamName(subject: string, grade: string) {
-  const date = new Date().toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })
-  const s = subject || "Subject"
-  const g = grade || "Grade"
+  const date = new Date().toLocaleDateString("es-ES", { year: "numeric", month: "short", day: "numeric" })
+  const s = subject || "Materia"
+  const g = grade || "Grado"
   return `${s} - ${g} - ${date}`
 }
 
@@ -72,7 +72,7 @@ export default function ActivityGenerator() {
       // Pre-selected to a sensible, visible value instead of an empty
       // placeholder — still a normal dropdown, just one fewer forced choice.
       exercise_type: "mixed",
-      difficulty: "Medium",
+      difficulty: "Medio",
       num_exercises: 20,
       exam_name: "",
       classroom_id: "",
@@ -115,10 +115,10 @@ export default function ActivityGenerator() {
       })
       setResult(activity)
       if (!examNameTouched) form.setValue("exam_name", activity.exam_name)
-      toast.success("Activity generated")
+      toast.success("Actividad generada")
       getUsage().then(setUsage).catch(() => {})
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Failed to generate activity")
+      toast.error(err instanceof Error ? err.message : "No se pudo generar la actividad")
     } finally {
       setSubmitting(false)
     }
@@ -129,23 +129,23 @@ export default function ActivityGenerator() {
       <div className="grid gap-6">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
-            <h1 className="text-2xl font-semibold tracking-tight">Activity Generator</h1>
+            <h1 className="text-2xl font-semibold tracking-tight">Generador de Actividades</h1>
             <p className="text-muted-foreground">
-              Describe the exam you need and let AI draft it in seconds.
+              Describe el examen que necesitas y deja que la IA lo redacte en segundos.
             </p>
           </div>
           {usage && <GenerationQuota used={usage.generations_used} />}
         </div>
 
         <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-6">
-          <FormSection title="Curriculum">
-            <Field label="Country / curriculum region" error={form.formState.errors.country?.message}>
+          <FormSection title="Currículo">
+            <Field label="País / región curricular" error={form.formState.errors.country?.message}>
               <Select
                 value={form.watch("country")}
                 onValueChange={(v) => form.setValue("country", v, { shouldValidate: true })}
               >
                 <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select a country" />
+                  <SelectValue placeholder="Selecciona un país" />
                 </SelectTrigger>
                 <SelectContent>
                   {COUNTRIES.map((country) => (
@@ -157,13 +157,13 @@ export default function ActivityGenerator() {
               </Select>
             </Field>
 
-            <Field label="Grade / year" error={form.formState.errors.grade?.message}>
+            <Field label="Grado" error={form.formState.errors.grade?.message}>
               <Select
                 value={form.watch("grade")}
                 onValueChange={(v) => form.setValue("grade", v, { shouldValidate: true })}
               >
                 <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select a grade" />
+                  <SelectValue placeholder="Selecciona un grado" />
                 </SelectTrigger>
                 <SelectContent>
                   {GRADES.map((g) => (
@@ -176,9 +176,9 @@ export default function ActivityGenerator() {
             </Field>
 
             <Field
-              label="Education level"
+              label="Nivel educativo"
               error={form.formState.errors.education_level?.message}
-              hint={!educationLevelTouched ? "Filled in from the grade above — change it if that's wrong" : undefined}
+              hint={!educationLevelTouched ? "Se llenó según el grado de arriba — cámbialo si no es correcto" : undefined}
             >
               <Select
                 value={form.watch("education_level")}
@@ -188,7 +188,7 @@ export default function ActivityGenerator() {
                 }}
               >
                 <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select a level" />
+                  <SelectValue placeholder="Selecciona un nivel" />
                 </SelectTrigger>
                 <SelectContent>
                   {EDUCATION_LEVELS.map((level) => (
@@ -201,14 +201,14 @@ export default function ActivityGenerator() {
             </Field>
           </FormSection>
 
-          <FormSection title="Exam content">
-            <Field label="Subject" error={form.formState.errors.subject?.message}>
+          <FormSection title="Contenido del examen">
+            <Field label="Materia" error={form.formState.errors.subject?.message}>
               <Select
                 value={form.watch("subject")}
                 onValueChange={(v) => form.setValue("subject", v, { shouldValidate: true })}
               >
                 <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select a subject" />
+                  <SelectValue placeholder="Selecciona una materia" />
                 </SelectTrigger>
                 <SelectContent>
                   {SUBJECTS.map((s) => (
@@ -220,12 +220,12 @@ export default function ActivityGenerator() {
               </Select>
             </Field>
 
-            <Field label="Specific topic (optional)" optional>
-              <Input placeholder="e.g. Fractions, Photosynthesis" {...form.register("topic")} />
+            <Field label="Tema específico (opcional)" optional>
+              <Input placeholder="ej. Fracciones, Fotosíntesis" {...form.register("topic")} />
             </Field>
 
             <div className="grid grid-cols-2 gap-4">
-              <Field label="Exercise type" error={form.formState.errors.exercise_type?.message}>
+              <Field label="Tipo de ejercicio" error={form.formState.errors.exercise_type?.message}>
                 <Select
                   value={form.watch("exercise_type")}
                   onValueChange={(v) => form.setValue("exercise_type", v, { shouldValidate: true })}
@@ -243,7 +243,7 @@ export default function ActivityGenerator() {
                 </Select>
               </Field>
 
-              <Field label="Difficulty" error={form.formState.errors.difficulty?.message}>
+              <Field label="Dificultad" error={form.formState.errors.difficulty?.message}>
                 <Select
                   value={form.watch("difficulty")}
                   onValueChange={(v) => form.setValue("difficulty", v, { shouldValidate: true })}
@@ -263,9 +263,9 @@ export default function ActivityGenerator() {
             </div>
           </FormSection>
 
-          <FormSection title="Options">
+          <FormSection title="Opciones">
             <Field
-              label={`Number of exercises: ${numExercises}`}
+              label={`Número de ejercicios: ${numExercises}`}
               error={form.formState.errors.num_exercises?.message}
             >
               <Slider
@@ -278,13 +278,13 @@ export default function ActivityGenerator() {
               />
             </Field>
 
-            <Field label="Link to classroom (optional)" optional>
+            <Field label="Vincular a un salón (opcional)" optional>
               <Select
                 value={form.watch("classroom_id")}
                 onValueChange={(v) => form.setValue("classroom_id", v)}
               >
                 <SelectTrigger className="w-full">
-                  <SelectValue placeholder="No classroom" />
+                  <SelectValue placeholder="Sin salón" />
                 </SelectTrigger>
                 <SelectContent>
                   {classrooms.map((c) => (
@@ -297,9 +297,9 @@ export default function ActivityGenerator() {
             </Field>
 
             <Field
-              label="Exam name"
+              label="Nombre del examen"
               error={form.formState.errors.exam_name?.message}
-              hint={!examNameTouched ? "AI will suggest a title based on the topic" : undefined}
+              hint={!examNameTouched ? "La IA sugerirá un título según el tema" : undefined}
             >
               <Input
                 {...form.register("exam_name", {
@@ -311,7 +311,7 @@ export default function ActivityGenerator() {
 
           <Button type="submit" size="lg" disabled={submitting} className="justify-self-start">
             {submitting ? <Loader2 className="animate-spin" /> : <Sparkles />}
-            {submitting ? "Generating..." : "Generate activity"}
+            {submitting ? "Generando..." : "Generar actividad"}
           </Button>
         </form>
       </div>
@@ -332,10 +332,10 @@ function GenerationQuota({ used }: { used: number }) {
     <div className="w-full max-w-56 shrink-0">
       <div className="flex items-baseline justify-between gap-2">
         <span className={cn("text-xs font-medium", low ? "text-warning-foreground" : "text-foreground")}>
-          <span className="font-mono tabular-nums">{remaining}</span> of{" "}
-          <span className="font-mono tabular-nums">{GENERATION_LIMIT}</span> left
+          <span className="font-mono tabular-nums">{remaining}</span> de{" "}
+          <span className="font-mono tabular-nums">{GENERATION_LIMIT}</span> restantes
         </span>
-        <span className="text-xs text-muted-foreground">this month</span>
+        <span className="text-xs text-muted-foreground">este mes</span>
       </div>
       <Progress
         value={percentUsed}
