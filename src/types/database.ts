@@ -109,9 +109,7 @@ export interface Purchase {
   created_at: string
 }
 
-// Matches the Spanish-speaking system's three stages. Grades are currently
-// capped at Primaria (see GRADES below), but the field stays editable in
-// case that changes later.
+// Matches the Spanish-speaking system's three stages.
 export const EDUCATION_LEVELS = ["Primaria", "Secundaria", "Bachillerato"] as const
 
 export const DIFFICULTIES = ["Fácil", "Medio", "Difícil", "Mixto"] as const
@@ -136,22 +134,29 @@ export const COUNTRIES = [
 export const GRADES = [
   "Preescolar",
   "1er Grado", "2do Grado", "3er Grado", "4to Grado", "5to Grado", "6to Grado",
+  "7mo Grado", "8vo Grado", "9no Grado", "10mo Grado", "11vo Grado",
 ] as const
 
 /** Best-guess education level for a grade, so the field can be pre-filled
  * instead of asking twice for overlapping information. Always shown and
- * editable, never applied silently. */
+ * editable, never applied silently. Follows the common LatAm structure
+ * (e.g. Colombia's): Preescolar-5to -> Primaria, 6to-9no -> Secundaria,
+ * 10mo-11vo -> Bachillerato. Some countries split the stages differently,
+ * which is exactly why this is only a pre-fill, never applied silently. */
 export function inferEducationLevel(grade: string): (typeof EDUCATION_LEVELS)[number] | null {
   const index = GRADES.indexOf(grade as (typeof GRADES)[number])
   if (index === -1) return null
-  return "Primaria"
+  if (index <= 5) return "Primaria"
+  if (index <= 9) return "Secundaria"
+  return "Bachillerato"
 }
 
-// Subjects actually taught up through 6th grade — no split sciences
-// (biology/chemistry/physics), civics, economics, or philosophy yet.
+// Spans primaria through bachillerato (grades up to 11) — includes split
+// sciences and the subjects that only show up in secondary/bachillerato.
 export const SUBJECTS = [
-  "Matemáticas", "Ciencias", "Inglés / Lengua",
-  "Lengua Materna / Literatura", "Historia", "Geografía", "Estudios Sociales",
+  "Matemáticas", "Ciencias", "Biología", "Física", "Química",
+  "Inglés / Lengua", "Lengua Materna / Literatura", "Historia", "Geografía",
+  "Estudios Sociales", "Educación Cívica", "Filosofía", "Economía",
   "Arte", "Música", "Educación Física", "Idioma Extranjero",
   "Ciencias Ambientales", "Salud",
 ] as const
