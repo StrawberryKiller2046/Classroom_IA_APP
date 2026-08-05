@@ -25,7 +25,7 @@ export default function AppShell() {
       <aside className="hidden shrink-0 bg-background shadow-[2px_0_12px_-2px_rgb(0_0_0_/_0.08)] md:flex md:w-60 md:flex-col">
         <div className="flex items-center gap-2.5 border-b px-5 py-4">
           <Logo className="size-8" />
-          <span className="font-semibold tracking-tight">Classroom AI</span>
+          <span className="font-semibold tracking-tight">Clase Rápida</span>
         </div>
         <nav className="flex flex-1 flex-col gap-0.5 p-3">
           {NAV_ITEMS.map((item) => (
@@ -53,7 +53,7 @@ export default function AppShell() {
         <header className="flex items-center justify-between border-b bg-background px-4 py-3 md:hidden">
           <div className="flex items-center gap-2">
             <Logo className="size-7" />
-            <span className="font-semibold tracking-tight">Classroom AI</span>
+            <span className="font-semibold tracking-tight">Clase Rápida</span>
           </div>
         </header>
 

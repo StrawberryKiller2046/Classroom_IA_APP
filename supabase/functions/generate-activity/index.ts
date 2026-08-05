@@ -173,7 +173,7 @@ async function callGemini(
     required: ["exam_name", "exercises"],
   }
 
-  const prompt = `You are an expert teacher creating a classroom exam.
+  const prompt = `You are an expert teacher creating a classroom exam for the Latin American / Spanish-speaking education market.
 
 Country / curriculum region: ${req.country}
 Education level: ${req.education_level}
@@ -184,13 +184,17 @@ Exercise type: ${req.exercise_type}
 Difficulty: ${req.difficulty}
 Number of exercises: ${req.num_exercises}
 
+Write every question, option, and the exam title in Spanish, using vocabulary, spelling, and phrasing natural to ${req.country} specifically (not a generic or Spain-centric register, unless the country is Spain).
+
+Align the content, expected prior knowledge, and skill level with the official national curriculum standards for ${req.education_level} / ${req.grade} / ${req.subject} in ${req.country} — not a generic international standard and not another country's curriculum. Use locally appropriate context: currency, units of measurement, place names, historical references, and cultural examples relevant to ${req.country}.
+
 Generate exactly ${req.num_exercises} exercises appropriate for this curriculum, level, and difficulty.
-For "mc" (multiple choice) exercises, include an "options" array of 3-5 choices and set "correct_answer" to the exact text of the correct option.
-For "tf" (true/false) exercises, set "correct_answer" to exactly "True" or "False".
-For "short" (short answer) exercises, set "correct_answer" to a concise expected answer.
+For "mc" (multiple choice) exercises, include an "options" array of 3-5 choices (in Spanish) and set "correct_answer" to the exact text of the correct option.
+For "tf" (true/false) exercises, set "correct_answer" to exactly the English word "True" or "False" — never "Verdadero"/"Falso" — because the app matches this field literally regardless of the exam's language; the question text itself still goes in Spanish.
+For "short" (short answer) exercises, set "correct_answer" to a concise expected answer in Spanish.
 Give every exercise a unique "id" like "q1", "q2", etc.
 
-Also set "exam_name" to a short, specific title (4-8 words) that describes what this exam is actually about, in the language most natural for the country and subject. Write it like a real exam title a teacher would print at the top of the page, for example "Fractions in Everyday Life" or "La Revolucion Mexicana: Causas y Consecuencias". Never use a generic "Subject - Grade - Date" format, and never mention the country, grade, or difficulty level in the title itself.
+Also set "exam_name" to a short, specific title in Spanish (4-8 words) that describes what this exam is actually about. Write it like a real exam title a teacher would print at the top of the page, for example "Fracciones en la Vida Cotidiana" or "La Revolución Mexicana: Causas y Consecuencias". Never use a generic "Materia - Grado - Fecha" format, and never mention the country, grade, or difficulty level in the title itself.
 
 Return ONLY the structured JSON, no extra commentary.`
 

@@ -1,4 +1,4 @@
-# Classroom Activity Generator
+# Clase Rápida
 
 A mobile-installable PWA for teachers: generate curriculum-aligned exams with AI, export them to PDF, manage classrooms and students, and grade submissions in class with a quick-capture screen that pulls answers straight from the database.
 

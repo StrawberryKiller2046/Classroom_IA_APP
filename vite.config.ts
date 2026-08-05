@@ -16,8 +16,8 @@ export default defineConfig({
       injectRegister: false,
       includeAssets: ['favicon.svg', 'icons/*.png', 'icons/*.svg'],
       manifest: {
-        name: 'Classroom Activity Generator',
-        short_name: 'Classroom AI',
+        name: 'Clase Rápida',
+        short_name: 'Clase Rápida',
         description:
           'Genera exámenes y actividades alineados al currículo en segundos, y califícalos en clase.',
         theme_color: '#7935c6',

@@ -123,19 +123,14 @@ export const EXERCISE_TYPES = [
   { value: "mixed", label: "Mixto" },
 ] as const
 
+// Enfocado en el mercado de LatAm: los países hispanohablantes de la
+// región, más España (origen del idioma/currículo) y Estados Unidos
+// (gran población de escuelas bilingües/de inmersión en español).
 export const COUNTRIES = [
-  "Argentina", "Australia", "Austria", "Bélgica", "Bolivia", "Brasil",
-  "Canadá", "Chile", "China", "Colombia", "Costa Rica", "Cuba",
-  "República Checa", "Dinamarca", "República Dominicana", "Ecuador", "Egipto",
-  "El Salvador", "Finlandia", "Francia", "Alemania", "Grecia", "Guatemala",
-  "Honduras", "Hong Kong", "Hungría", "India", "Indonesia", "Irlanda",
-  "Israel", "Italia", "Jamaica", "Japón", "Kenia", "Malasia", "México",
-  "Marruecos", "Países Bajos", "Nueva Zelanda", "Nicaragua", "Nigeria",
-  "Noruega", "Panamá", "Paraguay", "Perú", "Filipinas", "Polonia",
-  "Portugal", "Puerto Rico", "Rumania", "Rusia", "Arabia Saudita",
-  "Singapur", "Sudáfrica", "Corea del Sur", "España", "Suecia",
-  "Suiza", "Tailandia", "Turquía", "Ucrania", "Emiratos Árabes Unidos",
-  "Reino Unido", "Estados Unidos", "Uruguay", "Venezuela", "Vietnam",
+  "Argentina", "Bolivia", "Chile", "Colombia", "Costa Rica", "Cuba",
+  "Ecuador", "El Salvador", "España", "Estados Unidos", "Guatemala",
+  "Honduras", "México", "Nicaragua", "Panamá", "Paraguay", "Perú",
+  "Puerto Rico", "República Dominicana", "Uruguay", "Venezuela",
 ] as const
 
 export const GRADES = [
