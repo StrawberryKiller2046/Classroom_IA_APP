@@ -199,7 +199,7 @@ Also set "exam_name" to a short, specific title in Spanish (4-8 words) that desc
 Return ONLY the structured JSON, no extra commentary.`
 
   const response = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${apiKey}`,
+    `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${apiKey}`,
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },
